@@ -1,0 +1,16 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+python_version = "3.9"
+
+[packages]
+beautifulsoup4 = "*"
+requests = "*"
+pandas = "*"
+openpyxl = "*"
+
+[scripts]
+query = "python query.py"
+
+[dev-packages]
