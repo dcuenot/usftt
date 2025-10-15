@@ -56,11 +56,11 @@
                                     values[2] || '',  // nom
                                     values[3] || '',  // categ
                                     values[4] || '',  // natio
-                                    values[5] || '0',  // point
-                                    values[6] || '0',   // aclglob
-                                    values[7] || '0',   // apoint
-                                    values[8] || '0',   // valcla
-                                    values[9] || '0'   // valinit
+                                    round(values[5]) || '0',  // point
+                                    round(values[6]) || '0',   // aclglob
+                                    round(values[7]) || '0',   // apoint
+                                    round(values[8]) || '0',   // valcla
+                                    round(values[9]) || '0'   // valinit
                                 ];
                             }
                             return null;
