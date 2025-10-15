@@ -79,6 +79,8 @@
                         })
                         .filter(row => row !== null), // Remove invalid rows
                     order: [[4, 'desc']], // Sort by points by default
+                    pageLength: -1,       // Show all entries
+                    lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]], // Keep the length menu
                     language: {
                         url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/fr-FR.json'
                     }
