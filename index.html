@@ -22,7 +22,10 @@
                     <th>Catégorie</th>
                     <th>Nationalité</th>
                     <th>Points</th>
-                    <th>Points actuels</th>
+                    <th>aclglob</th>
+                    <th>apoint</th>
+                    <th>valcla</th>
+                    <th>valinit</th>
                 </tr>
             </thead>
             <tbody>
@@ -46,7 +49,7 @@
                         .map(row => {
                             const values = row.split(',');
                             // Only return row if it has all required values
-                            if (values.length >= 7) {
+                            if (values.length >= 9) {
                                 return [
                                     values[0] || '',  // licence
                                     values[1] || '',  // prenom
@@ -54,7 +57,10 @@
                                     values[3] || '',  // categ
                                     values[4] || '',  // natio
                                     values[5] || '0',  // point
-                                    values[6] || '0'   // apoint
+                                    values[6] || '0',   // aclglob
+                                    values[7] || '0',   // apoint
+                                    values[8] || '0',   // valcla
+                                    values[9] || '0'   // valinit
                                 ];
                             }
                             return null;
