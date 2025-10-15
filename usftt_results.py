@@ -70,7 +70,6 @@ def main():
                 if player_details:
                     basic_info.update({
                         'categ': player_details.get('categ'),
-                        'natio': player_details.get('natio'),
                         'point': player_details.get('point'),
                         'aclglob': player_details.get('aclglob'),
                         'apoint': player_details.get('apoint'),

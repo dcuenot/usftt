@@ -20,12 +20,13 @@
                     <th>Prénom</th>
                     <th>Nom</th>
                     <th>Catégorie</th>
-                    <th>Nationalité</th>
                     <th>Points</th>
                     <th>aclglob</th>
                     <th>apoint</th>
                     <th>valcla</th>
                     <th>valinit</th>
+                    <th>Progression Mensuelle</th>
+                    <th>Progression Phase</th>
                 </tr>
             </thead>
             <tbody>
@@ -47,7 +48,7 @@
             return Math.round(num * 10) / 10;
         }
 
-        fetch('players_08940073_20251016_002655.csv')
+        fetch('players_08940073_20251016_010448.csv')
             .then(response => response.text())
             .then(data => {
                 const rows = data.split('\n');
@@ -65,18 +66,20 @@
                                     values[1],             // prenom (string)
                                     values[2],             // nom (string)
                                     values[3],             // categ (string)
-                                    values[4],             // natio (string)
-                                    round(values[5]),      // point (number)
-                                    round(values[6]),      // aclglob (number)
-                                    round(values[7]),      // apoint (number)
-                                    round(values[8]),      // valcla (number)
-                                    round(values[9])       // valinit (number)
+                                    round(values[4]),      // point (number)
+                                    round(values[5]),      // aclglob (number)
+                                    round(values[6]),      // apoint (number)
+                                    round(values[7]),      // valcla (number)
+                                    round(values[8]),       // valinit (number)
+                                    round(values[8]),       // valinit (number)
+                                    round(values[6] - values[4]),       // apoint - point
+                                    round(values[8] - values[4]),       // valinit - point
                                 ];
                             }
                             return null;
                         })
                         .filter(row => row !== null), // Remove invalid rows
-                    order: [[5, 'desc']], // Sort by points by default
+                    order: [[4, 'desc']], // Sort by points by default
                     language: {
                         url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/fr-FR.json'
                     }
