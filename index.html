@@ -40,18 +40,26 @@
                 const rows = data.split('\n');
                 const headers = rows[0].split(',');
                 const table = $('#playersTable').DataTable({
-                    data: rows.slice(1).map(row => {
-                        const values = row.split(',');
-                        return [
-                            values[0],  // licence
-                            values[1],  // prenom
-                            values[2],  // nom
-                            values[3],  // categ
-                            values[4],  // natio
-                            values[5],  // point
-                            values[6]   // apoint
-                        ];
-                    }),
+                    data: rows
+                        .slice(1)
+                        .filter(row => row.trim() !== '') // Remove empty rows
+                        .map(row => {
+                            const values = row.split(',');
+                            // Only return row if it has all required values
+                            if (values.length >= 7) {
+                                return [
+                                    values[0] || '',  // licence
+                                    values[1] || '',  // prenom
+                                    values[2] || '',  // nom
+                                    values[3] || '',  // categ
+                                    values[4] || '',  // natio
+                                    values[5] || '0',  // point
+                                    values[6] || '0'   // apoint
+                                ];
+                            }
+                            return null;
+                        })
+                        .filter(row => row !== null), // Remove invalid rows
                     order: [[5, 'desc']], // Sort by points by default
                     language: {
                         url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/fr-FR.json'
