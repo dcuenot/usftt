@@ -12,5 +12,7 @@ openpyxl = "*"
 
 [scripts]
 query = "python query.py"
+teams = "python teams.py"
+fftt = "python fftt.py"
 
 [dev-packages]

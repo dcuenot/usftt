@@ -129,13 +129,21 @@ class PingPocketQuery(object):
         typeLicence = spans[4].text.strip()
 
         innerContent = soup.find('ul', class_="rounded").findAll('li')
+
         pointsMensuels = innerContent[1].find('small').text.strip()
-        if innerContent[2].find('small'):
+        print(innerContent)
+        print(innerContent[2].find('small').text.strip())
+        print(innerContent[3].find('small').text.strip())
+        print(innerContent[4].find('small').text.strip())
+        print(innerContent[5].find('small').text.strip())
+        if innerContent[3].find('small'):
             pointsDebutPhase = innerContent[2].find('small').text.strip()
-            progressionMensuelle = innerContent[3].find('small').text.strip()
-            progressionGenerale = innerContent[4].find('small').text.strip()
+            pointsDebutPhase1 = innerContent[3].find('small').text.strip()
+            progressionMensuelle = innerContent[4].find('small').text.strip()
+            progressionGenerale = innerContent[5].find('small').text.strip()
         else:
             pointsDebutPhase = None
+            pointsDebutPhase1 = None
             progressionMensuelle = None
             progressionGenerale = None
 
