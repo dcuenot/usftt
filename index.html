@@ -40,7 +40,11 @@
         // Helper function to round numbers and handle invalid values
         function round(value) {
             const num = parseFloat(value);
-            return isNaN(num) ? '0' : Math.round(num).toString();
+            if (isNaN(num)) return 0;
+            // If it's an integer, return as is
+            if (Number.isInteger(num)) return num;
+            // For decimal numbers, round to 1 decimal place
+            return Math.round(num * 10) / 10;
         }
 
         fetch('players_08940073_20251016_002655.csv')
@@ -57,16 +61,16 @@
                             // Only return row if it has all required values
                             if (values.length >= 9) {
                                 return [
-                                    values[0] || '',  // licence
-                                    values[1] || '',  // prenom
-                                    values[2] || '',  // nom
-                                    values[3] || '',  // categ
-                                    values[4] || '',  // natio
-                                    round(values[5]) || '0',  // point
-                                    round(values[6]) || '0',  // aclglob
-                                    round(values[7]) || '0',  // apoint
-                                    round(values[8]) || '0',  // valcla
-                                    round(values[9]) || '0'   // valinit
+                                    values[0],             // licence (string)
+                                    values[1],             // prenom (string)
+                                    values[2],             // nom (string)
+                                    values[3],             // categ (string)
+                                    values[4],             // natio (string)
+                                    round(values[5]),      // point (number)
+                                    round(values[6]),      // aclglob (number)
+                                    round(values[7]),      // apoint (number)
+                                    round(values[8]),      // valcla (number)
+                                    round(values[9])       // valinit (number)
                                 ];
                             }
                             return null;
