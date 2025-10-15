@@ -37,6 +37,12 @@
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
     <script>
+        // Helper function to round numbers and handle invalid values
+        function round(value) {
+            const num = parseFloat(value);
+            return isNaN(num) ? '0' : Math.round(num).toString();
+        }
+
         fetch('players_08940073_20251016_002655.csv')
             .then(response => response.text())
             .then(data => {
@@ -57,9 +63,9 @@
                                     values[3] || '',  // categ
                                     values[4] || '',  // natio
                                     round(values[5]) || '0',  // point
-                                    round(values[6]) || '0',   // aclglob
-                                    round(values[7]) || '0',   // apoint
-                                    round(values[8]) || '0',   // valcla
+                                    round(values[6]) || '0',  // aclglob
+                                    round(values[7]) || '0',  // apoint
+                                    round(values[8]) || '0',  // valcla
                                     round(values[9]) || '0'   // valinit
                                 ];
                             }
