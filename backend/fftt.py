@@ -69,7 +69,7 @@ class FFTTApiClient:
         
         # Prepare request and print full URL with params
         prepared_request = requests.Request('GET', url, params=params).prepare()
-        print(f"🌐 Calling: {prepared_request.url}")
+        # print(f"🌐 Calling: {prepared_request.url}")
         
         response = requests.get(url, params=params, timeout=10)
         response.raise_for_status()

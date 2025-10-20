@@ -2,17 +2,10 @@
 url = "https://pypi.org/simple"
 verify_ssl = true
 name = "pypi"
-python_version = "3.9"
 
 [packages]
-beautifulsoup4 = "*"
-requests = "*"
-pandas = "*"
-openpyxl = "*"
-
-[scripts]
-query = "python query.py"
-teams = "python teams.py"
-fftt = "python fftt.py"
 
 [dev-packages]
+
+[requires]
+python_version = "3.13"
