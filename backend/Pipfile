@@ -7,8 +7,8 @@ python_version = "3.9"
 [packages]
 beautifulsoup4 = "*"
 requests = "*"
-pandas = "*"
 openpyxl = "*"
+pandas = "*"
 
 [scripts]
 query = "python query.py"
