@@ -52,6 +52,10 @@ def save_to_csv(data, filename, fieldnames):
     
     # Sort by idlicence before saving (treat as identifier string, not numeric)
     merged_df.sort_values(by='idlicence', key=lambda x: x.astype(int), inplace=True)
+
+    # Reorder columns: put important ones first
+    front_cols = ['idlicence', 'licence', 'sexe', 'cat', 'prenom', 'nom']  # columns you want first
+    merged_df = merged_df[front_cols + [c for c in merged_df.columns if c not in front_cols]]
     
     # Save to CSV
     merged_df.to_csv(filename, index=False)
@@ -93,6 +97,12 @@ def save_licenses_to_csv(licenses, club_number):
     count = save_to_csv(licenses_clone, filename, fieldnames)
     print(f"📝 {count} licenses saved to {filename}")
 
+def to_float(value):
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return 0.0  # or None, if you prefer
+
 def main():
     """Fetch and display USFTT club details and teams."""
     # Initialize FFTT client
@@ -127,6 +137,9 @@ def main():
             competitor['parties'] = nb_parties_jouees(client, competitor['licence'])
             competitor[get_month(-1)] = competitor.pop("pointm")
             competitor[get_month(-2)] = competitor.pop("apointm")
+            competitor['prg_m'] = to_float(competitor[get_month(-1)]) - to_float(competitor[get_month(-2)])
+            competitor['prg_p'] = to_float(competitor[get_month(-1)]) - to_float(competitor['point'])
+            competitor['prg_a'] = to_float(competitor[get_month(-1)]) - to_float(competitor['initm'])
 
         # Save competitors to CSV
         save_competitors_to_csv(competitors, club_number)
