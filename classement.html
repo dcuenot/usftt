@@ -194,6 +194,8 @@
                     }),
                     order: [[4, 'desc']], // Sort by points by default
                     pageLength: -1,       // Show all entries
+                    lengthChange: false,  // Remove length change option
+                    info: false,         // Remove "Showing X of Y entries" text
                     language: {
                         url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/fr-FR.json'
                     }
@@ -202,9 +204,12 @@
             .catch(error => console.error('Error loading CSV:', error));
             
         function formatProgression(value) {
-            if (isNaN(value)) return '';
-            const formatted = value.toFixed(1);
-            const className = value > 0 ? 'progression-positive' : value < 0 ? 'progression-negative' : '';
+            // Convert to number and handle invalid values
+            const num = parseFloat(value);
+            if (isNaN(num)) return '';
+            
+            const formatted = num.toFixed(1);
+            const className = num > 0 ? 'text-success' : num < 0 ? 'text-danger' : '';
             return `<span class="${className}">${formatted}</span>`;
         }
     </script>
