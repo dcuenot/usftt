@@ -96,13 +96,12 @@
                 <tr>
                     <th>Sexe</th>
                     <th>Nom</th>
-                    <th>Prénom</th>
                     <th>Cat</th>
                     <th>Points</th>
                     <th>Points M-1</th>
                     <th>Points M-2</th>
                     <th>Prog. Mensuelle</th>
-                    <th>Prog. Points</th>
+                    <th>Prog. Phase</th>
                     <th>Prog. Annuelle</th>
                     <th>Parties</th>
                 </tr>
@@ -182,15 +181,14 @@
                         
                         return [
                             formatSexe(values[headers.indexOf('sexe')]),
-                            values[headers.indexOf('nom')],
-                            values[headers.indexOf('prenom')],
+                            values[headers.indexOf('nom')] + ' ' + values[headers.indexOf('prenom')],
                             values[headers.indexOf('cat')],
                             currentPoints,
                             pointsM1,
                             pointsM2,
-                            formatProgression(progMensuelle),
-                            formatProgression(progPoints),
-                            formatProgression(progAnnuelle),
+                            formatProgression(values[headers.indexOf('prg_m')]),
+                            formatProgression(values[headers.indexOf('prg_p')]),
+                            formatProgression(values[headers.indexOf('prg_a')]),
                             values[headers.indexOf('parties')]
                         ];
                     }),
