@@ -167,9 +167,10 @@
                 const rows = data.split('\n');
                 const headers = rows[0].split(',');
                 
-                // Find column indices
-                const m1Index = headers.findIndex(h => h.includes('2310')); // October
-                const m2Index = headers.findIndex(h => h.includes('2309')); // September
+                // Find column indices 
+                // TODO improve
+                const m1Index = headers.findIndex(h => h.includes('2509')); // October
+                const m2Index = headers.findIndex(h => h.includes('2508')); // September
                 
                 const table = $('#competitorsTable').DataTable({
                     data: rows.slice(1).filter(row => row.trim()).map(row => {
