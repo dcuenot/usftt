@@ -5,244 +5,93 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon/favicon-16x16.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="images/favicon/apple-touch-icon.png">
-    <link rel="manifest" href="site.webmanifest">
-    <meta name="theme-color" content="#003087">
-    
-    <title>USFTT - Liste des joueurs</title>
+    <title>USFTT - Compétiteurs</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" rel="stylesheet">
     <style>
-        body { 
-            padding: 20px;
-            padding-bottom: 70px; /* Space for mobile nav */
-        }
+        body { padding: 20px; padding-bottom: 70px; }
         .container { max-width: 1200px; }
-        .nav-link.active { font-weight: bold; }
-        
-        /* Mobile bottom navigation */
-        .mobile-nav {
-            display: none;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: white;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-            z-index: 1000;
-        }
-        
-        .mobile-nav .nav-link {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 0.5rem 0;
-            color: #6c757d;
-            text-decoration: none;
-            font-size: 0.8rem;
-        }
-        
-        .mobile-nav .nav-link i {
-            font-size: 1.5rem;
-            margin-bottom: 0.2rem;
-        }
-        
-        .mobile-nav .nav-link.active {
-            color: #0d6efd;
-        }
-        
-        /* Hide top nav on mobile, show bottom nav */
-        @media (max-width: 991.98px) {
-            .navbar { display: none; }
-            .mobile-nav { display: block; }
-        }
+        .progression-positive { color: green; }
+        .progression-negative { color: red; }
     </style>
 </head>
 <body>
-    <!-- Add navigation menu -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
-        <div class="container">
-            <a class="navbar-brand" href="index.html">USFTT</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="index.html">Accueil</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="classement.html">Classement individuel</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="equipes.html">Résultats par équipes</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="tests.html">Tests</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
     <div class="container">
-        <h1 class="mb-4">USFTT - Liste des joueurs</h1>
-        
-        <!-- Add this select element before the table -->
-        <div class="mb-3">
-            <label for="categoryFilter" class="form-label">Filtrer par catégorie:</label>
-            <select id="categoryFilter" class="form-select" style="width: 200px;">
-                <option value="">Toutes les catégories</option>
-            </select>
-        </div>
-
-        <table id="playersTable" class="table table-striped table-hover">
+        <h1 class="mb-4">USFTT - Compétiteurs</h1>
+        <table id="competitorsTable" class="table table-striped table-hover">
             <thead>
                 <tr>
                     <th>Licence</th>
-                    <th>Prénom</th>
                     <th>Nom</th>
-                    <th>Catégorie</th>
+                    <th>Prénom</th>
+                    <th>Cat</th>
                     <th>Points</th>
-                    <th>aclglob</th>
-                    <th>apoint</th>
-                    <th>valcla</th>
-                    <th>valinit</th>
-                    <th>Progression Mensuelle</th>
-                    <th>Progression Phase</th>
+                    <th>Points M-1</th>
+                    <th>Points M-2</th>
+                    <th>Prog. Mensuelle</th>
+                    <th>Prog. Points</th>
+                    <th>Prog. Annuelle</th>
+                    <th>Parties</th>
                 </tr>
             </thead>
-            <tbody>
-            </tbody>
         </table>
     </div>
-
-    <!-- Mobile Bottom Navigation -->
-    <nav class="mobile-nav">
-        <div class="container-fluid">
-            <div class="row text-center">
-                <div class="col-3">
-                    <a href="index.html" class="nav-link">
-                        <i class="bi bi-house-fill"></i>
-                        <span>Accueil</span>
-                    </a>
-                </div>
-                <div class="col-3">
-                    <a href="classement.html" class="nav-link active">
-                        <i class="bi bi-trophy-fill"></i>
-                        <span>Classement</span>
-                    </a>
-                </div>
-                <div class="col-3">
-                    <a href="equipes.html" class="nav-link">
-                        <i class="bi bi-people-fill"></i>
-                        <span>Équipes</span>
-                    </a>
-                </div>
-                <div class="col-3">
-                    <a href="tests.html" class="nav-link">
-                        <i class="bi bi-speedometer2"></i>
-                        <span>Tests</span>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </nav>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
     <script>
-        // Helper function to round numbers and handle invalid values
-        function round(value) {
-            const num = parseFloat(value);
-            if (isNaN(num)) return 0;
-            // If it's an integer, return as is
-            if (Number.isInteger(num)) return num;
-            // For decimal numbers, round to 1 decimal place
-            return Math.round(num * 10) / 10;
-        }
-
-        fetch('players_08940073_20251016_010448.csv')
+        fetch('backend/competitors_08940073.csv')
             .then(response => response.text())
             .then(data => {
                 const rows = data.split('\n');
                 const headers = rows[0].split(',');
-                const table = $('#playersTable').DataTable({
-                    data: rows
-                        .slice(1)
-                        .filter(row => row.trim() !== '') // Remove empty rows
-                        .map(row => {
-                            const values = row.split(',');
-                            // Only return row if it has all required values
-                            if (values.length >= 9) {
-                                return [
-                                    values[0],             // licence (string)
-                                    values[1],             // prenom (string)
-                                    values[2],             // nom (string)
-                                    values[3],             // categ (string)
-                                    round(values[4]),      // point (number)
-                                    round(values[5]),      // aclglob (number)
-                                    round(values[6]),      // apoint (number)
-                                    round(values[7]),      // valcla (number)
-                                    round(values[8]),       // valinit (number)
-                                    round(values[4]) - round(values[6]),       // point - apoint
-                                    round(values[4]) - round(values[8]),       // point - valinit
-                                ];
-                            }
-                            return null;
-                        })
-                        .filter(row => row !== null), // Remove invalid rows
+                
+                // Find column indices
+                const m1Index = headers.findIndex(h => h.includes('2310')); // October
+                const m2Index = headers.findIndex(h => h.includes('2309')); // September
+                
+                const table = $('#competitorsTable').DataTable({
+                    data: rows.slice(1).filter(row => row.trim()).map(row => {
+                        const values = row.split(',');
+                        const pointsM1 = parseFloat(values[m1Index] || 0);
+                        const pointsM2 = parseFloat(values[m2Index] || 0);
+                        const currentPoints = parseFloat(values[headers.indexOf('point')] || 0);
+                        const initialPoints = parseFloat(values[headers.indexOf('initm')] || 0);
+                        
+                        // Calculate progressions
+                        const progMensuelle = pointsM1 - pointsM2;
+                        const progPoints = pointsM1 - currentPoints;
+                        const progAnnuelle = pointsM1 - initialPoints;
+                        
+                        return [
+                            values[headers.indexOf('licence')],
+                            values[headers.indexOf('nom')],
+                            values[headers.indexOf('prenom')],
+                            values[headers.indexOf('cat')],
+                            currentPoints,
+                            pointsM1,
+                            pointsM2,
+                            formatProgression(progMensuelle),
+                            formatProgression(progPoints),
+                            formatProgression(progAnnuelle),
+                            values[headers.indexOf('parties')]
+                        ];
+                    }),
                     order: [[4, 'desc']], // Sort by points by default
-                    pageLength: -1,       // Show all entries
-                    lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]], // Keep the length menu
                     language: {
                         url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/fr-FR.json'
                     }
                 });
-
-                // Add category filter functionality
-                const categoryColumn = 3; // Index of category column
-                
-                // Get unique categories
-                const categories = [...new Set(
-                    table.column(categoryColumn)
-                        .data()
-                        .toArray()
-                        .filter(cat => cat) // Remove empty values
-                        .sort()
-                )];
-                
-                // Populate category dropdown
-                const categoryFilter = document.getElementById('categoryFilter');
-                categories.forEach(category => {
-                    const option = document.createElement('option');
-                    option.value = category;
-                    option.textContent = category;
-                    categoryFilter.appendChild(option);
-                });
-
-                // Add event listener for category filter
-                $('#categoryFilter').on('change', function() {
-                    const selectedCategory = this.value;
-                    table.column(categoryColumn)
-                        .search(selectedCategory)
-                        .draw();
-                });
             })
             .catch(error => console.error('Error loading CSV:', error));
+            
+        function formatProgression(value) {
+            if (isNaN(value)) return '';
+            const formatted = value.toFixed(1);
+            const className = value > 0 ? 'progression-positive' : value < 0 ? 'progression-negative' : '';
+            return `<span class="${className}">${formatted}</span>`;
+        }
     </script>
-
-
-    Next:
-    * filter by category
-    * nombre de match joués
-    * nombre de match gagnés / perdus / belles ?
-    * sexe
 </body>
 </html>
