@@ -15,7 +15,7 @@ def get_month(nb: int) -> str:
     today = datetime.now()
     first = today.replace(day=1)
     approx_last_month = first + timedelta(days=nb * 30)
-    return approx_last_month.strftime("%b")
+    return f"pts_{approx_last_month.strftime('%y%m')}"
 
 def save_to_csv(data, filename, fieldnames):
     """Generic function to save data to CSV with merging capability."""
@@ -55,7 +55,7 @@ def save_to_csv(data, filename, fieldnames):
 
     # Reorder columns: put important ones first
     front_cols = ['idlicence', 'licence', 'sexe', 'cat', 'prenom', 'nom']  # columns you want first
-    merged_df = merged_df[front_cols + [c for c in merged_df.columns if c not in front_cols]]
+    merged_df = merged_df[front_cols + sorted([c for c in merged_df.columns if c not in front_cols])]
     
     # Save to CSV
     merged_df.to_csv(filename, index=False)
