@@ -140,6 +140,15 @@
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
     <script>
+        function formatSexe(sexe) {
+            if (sexe === 'F') {
+                return '<i class="bi bi-person-standing-dress text-danger" style="font-size: 1.2rem;"></i>';
+            } else if (sexe === 'M') {
+                return '<i class="bi bi-person-standing text-primary" style="font-size: 1.2rem;"></i>';
+            }
+            return '';
+        }
+
         fetch('backend/competitors_08940073.csv')
             .then(response => response.text())
             .then(data => {
@@ -164,7 +173,7 @@
                         const progAnnuelle = pointsM1 - initialPoints;
                         
                         return [
-                            values[headers.indexOf('sexe')],
+                            formatSexe(values[headers.indexOf('sexe')]),  // Format gender with icon
                             values[headers.indexOf('nom')],
                             values[headers.indexOf('prenom')],
                             values[headers.indexOf('cat')],
@@ -178,6 +187,7 @@
                         ];
                     }),
                     order: [[4, 'desc']], // Sort by points by default
+                    pageLength: -1,       // Show all entries
                     language: {
                         url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/fr-FR.json'
                     }
