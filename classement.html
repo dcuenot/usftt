@@ -91,6 +91,11 @@
 
     <div class="container">
         <h1 class="mb-4">USFTT - Compétiteurs</h1>
+        <div class="mb-3">
+            <button id="toggleInactive" class="btn btn-outline-primary btn-sm">
+                <i class="fa-solid fa-eye"></i> Afficher joueurs inactifs
+            </button>
+        </div>
         <table id="competitorsTable" class="table table-striped table-hover">
             <thead>
                 <tr>
@@ -198,7 +203,25 @@
                     info: false,         // Remove "Showing X of Y entries" text
                     language: {
                         url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/fr-FR.json'
+                    },
+                    createdRow: function(row, data) {
+                        // Hide rows with 0 matches by default
+                        if (parseInt(data[9]) === 0) {
+                            $(row).addClass('inactive-player').hide();
+                        }
                     }
+                });
+
+                // Add toggle button functionality
+                let showInactive = false;
+                $('#toggleInactive').on('click', function() {
+                    showInactive = !showInactive;
+                    $('.inactive-player').toggle(showInactive);
+                    
+                    // Update button text and icon
+                    const icon = showInactive ? 'fa-eye-slash' : 'fa-eye';
+                    const text = showInactive ? 'Masquer joueurs inactifs' : 'Afficher joueurs inactifs';
+                    $(this).html(`<i class="fa-solid ${icon}"></i> ${text}`);
                 });
             })
             .catch(error => console.error('Error loading CSV:', error));
