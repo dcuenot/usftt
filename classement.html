@@ -97,15 +97,11 @@
                 <i class="fa-solid fa-eye"></i> Afficher joueurs inactifs
             </button>
             
-            <!-- Add filters -->
+            <!-- Updated gender filter -->
             <select id="sexeFilter" class="form-select form-select-sm" style="width: auto;">
-                <option value="">Tous</option>
-                <option value="M"><i class="fa-solid fa-person"></i> Hommes</option>
-                <option value="F"><i class="fa-solid fa-person-dress"></i> Femmes</option>
-            </select>
-            
-            <select id="categoryFilter" class="form-select form-select-sm" style="width: auto;">
-                <option value="">Toutes catégories</option>
+                <option value="">Tous les joueurs</option>
+                <option value="M">Hommes</option>
+                <option value="F">Femmes</option>
             </select>
         </div>
         <table id="competitorsTable" class="table table-striped table-hover">
@@ -251,7 +247,19 @@
                             const val = $(this).val();
                             table.column(3).search(val ? '^' + val : '', true, false).draw();
                         });
-                    }
+                    },
+                    columnDefs: [{
+                        // Target the gender column (index 0)
+                        targets: 0,
+                        render: function(data, type) {
+                            if (type === 'filter') {
+                                // Return raw 'M' or 'F' value for filtering
+                                return data.includes('person-dress') ? 'F' : 'M';
+                            }
+                            // Return formatted HTML for display
+                            return data;
+                        }
+                    }]
                 });
 
                 // Replace select options with icons for gender
