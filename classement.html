@@ -162,11 +162,9 @@
     <script>
         function formatSexe(sexe) {
             if (sexe === 'F') {
-                return '<i class="fa-solid fa-person-dress text-danger" style="font-size: 1.2rem;"></i>';
-            } else if (sexe === 'M') {
-                return '<i class="fa-solid fa-person text-primary" style="font-size: 1.2rem;"></i>';
+                return '<i class="fa-solid fa-person-dress text-danger"></i>';
             }
-            return '';
+            return '<i class="fa-solid fa-person text-primary"></i>';
         }
 
         fetch('backend/competitors_08940073.csv')
@@ -174,11 +172,6 @@
             .then(data => {
                 const rows = data.split('\n');
                 const headers = rows[0].split(',');
-                
-                // Find column indices 
-                // TODO improve
-                const m1Index = headers.findIndex(h => h.includes('2509')); // October
-                const m2Index = headers.findIndex(h => h.includes('2508')); // September
                 
                 const table = $('#competitorsTable').DataTable({
                     data: rows.slice(1).filter(row => row.trim()).map(row => {
@@ -194,8 +187,8 @@
                         const progAnnuelle = pointsM1 - initialPoints;
                         
                         return [
-                            formatSexe(values[headers.indexOf('sexe')]),
-                            values[headers.indexOf('nom')] + ' ' + values[headers.indexOf('prenom')],
+                            formatSexe(values[headers.indexOf('sexe')]),  // Gender with icon
+                            values[headers.indexOf('nom')],
                             values[headers.indexOf('cat')],
                             currentPoints,
                             pointsM1,
@@ -240,7 +233,9 @@
                         // Add filter handlers
                         $('#sexeFilter').on('change', function() {
                             const val = $(this).val();
-                            table.column(0).search(val).draw();
+                            table.column(0)
+                                .search(val ? `^${val}$` : '', true, false)
+                                .draw();
                         });
                         
                         $('#categoryFilter').on('change', function() {
@@ -251,13 +246,13 @@
                     columnDefs: [{
                         // Target the gender column (index 0)
                         targets: 0,
-                        render: function(data, type) {
-                            if (type === 'filter') {
-                                // Return raw 'M' or 'F' value for filtering
-                                return data.includes('person-dress') ? 'F' : 'M';
+                        render: function(data, type, row) {
+                            if (type === 'display') {
+                                // Return icon for display
+                                return formatSexe(data);
                             }
-                            // Return formatted HTML for display
-                            return data;
+                            // Return raw value for filtering/sorting
+                            return data === 'F' ? 'F' : 'M';
                         }
                     }]
                 });
