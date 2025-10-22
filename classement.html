@@ -103,6 +103,16 @@
                 <option value="F">Femmes</option>
                 <option value="M">Hommes</option>
             </select>
+
+            <select id="categoryFilter" class="form-select form-select-sm" style="width: auto;">
+                <option value="">Toutes catégories</option>
+                <option value="B">Benjamins</option>
+                <option value="C">Cadets</option>
+                <option value="M">Minimes</option>
+                <option value="J">Juniors</option>
+                <option value="S">Seniors</option>
+                <option value="V">Vétérans</option>
+            </select>
         </div>
         <table id="competitorsTable" class="table table-striped table-hover">
             <thead>
@@ -110,13 +120,12 @@
                     <th></th>
                     <th>Nom</th>
                     <th>Cat</th>
-                    <th>Points</th>
-                    <th>Points M-1</th>
-                    <th>Points M-2</th>
-                    <th>Prog. Mensuelle</th>
-                    <th>Prog. Phase</th>
-                    <th>Prog. Annuelle</th>
-                    <th>Parties</th>
+                    <th>Points officiels</th>
+                    <th>Points mensuels</th>
+                    <th>Progression Mensuelle</th>
+                    <th>Progression Phase</th>
+                    <th>Progression Annuelle</th>
+                    <th>Nb matchs</th>
                 </tr>
             </thead>
         </table>
@@ -175,26 +184,22 @@
                 
                 // Find month columns - looking for pts_YYMM pattern
                 const currentDate = new Date();
-                const currentMonth = (currentDate.getMonth() + 1).toString().padStart(2, '0');
-                const currentYear = currentDate.getFullYear().toString().slice(-2);
+                const previousMonthDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
+                const previousMonthDate_month = (previousMonthDate.getMonth() + 1).toString().padStart(2, '0');
+                const previousMonthDate_year = previousMonthDate.getFullYear().toString().slice(-2);
                 
                 // Calculate previous months
-                const m1Index = headers.findIndex(h => h.startsWith('pts_'));
-                const m2Index = headers.findIndex(h => h !== headers[m1Index] && h.startsWith('pts_'));
-                
+                const m1Index = 'pts_' + previousMonthDate_year + previousMonthDate_month;
+
                 console.log('Headers:', headers); // Debug: check headers
-                console.log('Month indices:', m1Index, m2Index); // Debug: check found indices
+                console.log('Month indices:', m1Index); // Debug: check found indices
                 
                 const table = $('#competitorsTable').DataTable({
                     data: rows.slice(1).filter(row => row.trim()).map(row => {
                         const values = row.split(',');
-                        const pointsM1 = parseFloat(values[m1Index] || 0);
-                        const pointsM2 = parseFloat(values[m2Index] || 0);
+                        const pointsM1 = parseFloat(values[headers.indexOf(m1Index)] || 0);
                         const currentPoints = parseFloat(values[headers.indexOf('point')] || 0);
                         const initialPoints = parseFloat(values[headers.indexOf('initm')] || 0);
-
-
-                        console.log(values[headers.indexOf('nom')], values[headers.indexOf('sexe')]);
                                             
                         return [
                             values[headers.indexOf('sexe')],  // Gender with icon
@@ -202,7 +207,6 @@
                             values[headers.indexOf('cat')],
                             currentPoints,
                             pointsM1,
-                            pointsM2,
                             formatProgression(values[headers.indexOf('prg_m')]),
                             formatProgression(values[headers.indexOf('prg_p')]),
                             formatProgression(values[headers.indexOf('prg_a')]),
@@ -232,6 +236,13 @@
                     const val = $(this).val();
                     table.column(0)
                         .search(val ? `^${val}$` : '', true, false)
+                        .draw();
+                });
+
+                $('#categoryFilter').on('change', function() {
+                    const val = $(this).val();
+                    table.column(2) // Category column index
+                        .search(val ? `^${val}` : '', true, false)
                         .draw();
                 });
                 
