@@ -100,8 +100,8 @@
             <!-- Updated gender filter -->
             <select id="sexeFilter" class="form-select form-select-sm" style="width: auto;">
                 <option value="">Tous les joueurs</option>
-                <option value="M">Hommes</option>
-                <option value="F">Femmes</option>
+                <option value="M"><i class="fa-solid fa-person text-primary"></i> Hommes plop</option>
+                <option value="F"><i class="fa-solid fa-person-dress text-danger"></i> Femmes</option>
             </select>
         </div>
         <table id="competitorsTable" class="table table-striped table-hover">
@@ -161,6 +161,7 @@
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
     <script>
         function formatSexe(sexe) {
+            console.log('Formatting sexe:', sexe); // Debug: check sexe value
             if (sexe === 'F') {
                 return '<i class="fa-solid fa-person-dress text-danger"></i>';
             }
@@ -192,9 +193,12 @@
                         const pointsM2 = parseFloat(values[m2Index] || 0);
                         const currentPoints = parseFloat(values[headers.indexOf('point')] || 0);
                         const initialPoints = parseFloat(values[headers.indexOf('initm')] || 0);
+
+
+                        console.log(values[headers.indexOf('nom')], values[headers.indexOf('sexe')]);
                                             
                         return [
-                            formatSexe(values[headers.indexOf('sexe')]),  // Gender with icon
+                            values[headers.indexOf('sexe')],  // Gender with icon
                             values[headers.indexOf('nom')] + ' ' + values[headers.indexOf('prenom')],
                             values[headers.indexOf('cat')],
                             currentPoints,
