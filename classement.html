@@ -197,8 +197,8 @@
                 const table = $('#competitorsTable').DataTable({
                     data: rows.slice(1).filter(row => row.trim()).map(row => {
                         const values = row.split(',');
-                        const pointsM1 = parseFloat(values[headers.indexOf(m1Index)] || 0);
-                        const currentPoints = parseFloat(values[headers.indexOf('point')] || 0);
+                        const pointsM1 = Math.round(parseFloat(values[headers.indexOf(m1Index)] || 0));
+                        const currentPoints = Math.round(parseFloat(values[headers.indexOf('point')] || 0));
                         const parties = parseInt(values[headers.indexOf('parties')] || 0);
                         
                         // Create row data array
@@ -214,7 +214,6 @@
                             parties
                         ];
 
-                        // Return both row data and metadata for createdRow callback
                         return rowData;
                     }),
                     createdRow: function(row, data) {
@@ -223,15 +222,22 @@
                             $(row).addClass('inactive-player').hide();
                         }
                     },
-                    columnDefs: [{
-                        targets: 0,
-                        render: function(data, type, row) {
-                            if (type === 'display') {
-                                return formatSexe(data);
+                    columnDefs: [
+                        {
+                            targets: 0,
+                            render: function(data, type, row) {
+                                if (type === 'display') {
+                                    return formatSexe(data);
+                                }
+                                return data === 'F' ? 'F' : 'M';
                             }
-                            return data === 'F' ? 'F' : 'M';
+                        },
+                        {
+                            // Points and progression columns (indexes 3 through 8)
+                            targets: [3, 4, 5, 6, 7, 8],
+                            className: 'text-end'  // Right align
                         }
-                    }],
+                    ],
                     order: [[4, 'desc']],
                     pageLength: -1,
                     lengthChange: false,
@@ -278,7 +284,7 @@
             const num = parseFloat(value);
             if (isNaN(num)) return '';
             
-            const formatted = num.toFixed(1);
+            const formatted = Math.round(num);  // Round to whole number
             const className = num > 0 ? 'text-success' : num < 0 ? 'text-danger' : '';
             return `<span class="${className}">${formatted}</span>`;
         }
