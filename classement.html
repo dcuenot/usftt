@@ -249,7 +249,7 @@
                         
                         $('#categoryFilter').on('change', function() {
                             const val = $(this).val();
-                            table.column(3).search(val ? '^' + val, true, false).draw();
+                            table.column(3).search(val ? '^' + val : '', true, false).draw();
                         });
                     }
                 });
