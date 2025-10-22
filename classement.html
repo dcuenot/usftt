@@ -199,10 +199,11 @@
                         const values = row.split(',');
                         const pointsM1 = parseFloat(values[headers.indexOf(m1Index)] || 0);
                         const currentPoints = parseFloat(values[headers.indexOf('point')] || 0);
-                        const initialPoints = parseFloat(values[headers.indexOf('initm')] || 0);
-                                            
-                        return [
-                            values[headers.indexOf('sexe')],  // Gender with icon
+                        const parties = parseInt(values[headers.indexOf('parties')] || 0);
+                        
+                        // Create row data array
+                        const rowData = [
+                            values[headers.indexOf('sexe')],
                             values[headers.indexOf('nom')] + ' ' + values[headers.indexOf('prenom')],
                             values[headers.indexOf('cat')],
                             currentPoints,
@@ -210,9 +211,18 @@
                             formatProgression(values[headers.indexOf('prg_m')]),
                             formatProgression(values[headers.indexOf('prg_p')]),
                             formatProgression(values[headers.indexOf('prg_a')]),
-                            values[headers.indexOf('parties')]
+                            parties
                         ];
+
+                        // Return both row data and metadata for createdRow callback
+                        return rowData;
                     }),
+                    createdRow: function(row, data) {
+                        // Add inactive-player class if matches = 0
+                        if (parseInt(data[8]) === 0) {
+                            $(row).addClass('inactive-player').hide();
+                        }
+                    },
                     columnDefs: [{
                         targets: 0,
                         render: function(data, type, row) {
