@@ -100,8 +100,8 @@
             <!-- Updated gender filter -->
             <select id="sexeFilter" class="form-select form-select-sm" style="width: auto;">
                 <option value="">Tous les joueurs</option>
-                <option value="M"><i class="fa-solid fa-person text-primary"></i> Hommes plop</option>
-                <option value="F"><i class="fa-solid fa-person-dress text-danger"></i> Femmes</option>
+                <option value="F">Femmes</option>
+                <option value="M">Hommes</option>
             </select>
         </div>
         <table id="competitorsTable" class="table table-striped table-hover">
@@ -161,7 +161,6 @@
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
     <script>
         function formatSexe(sexe) {
-            console.log('Formatting sexe:', sexe); // Debug: check sexe value
             if (sexe === 'F') {
                 return '<i class="fa-solid fa-person-dress text-danger"></i>';
             }
@@ -235,10 +234,6 @@
                         .search(val ? `^${val}$` : '', true, false)
                         .draw();
                 });
-                
-                // Replace select options with icons for gender
-                $('#sexeFilter option[value="M"]').html('<i class="fa-solid fa-person text-primary"></i> Hommes');
-                $('#sexeFilter option[value="F"]').html('<i class="fa-solid fa-person-dress text-danger"></i> Femmes');
                 
                 // Add toggle button functionality
                 let showInactive = false;
