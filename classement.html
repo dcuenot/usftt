@@ -206,64 +206,32 @@
                             values[headers.indexOf('parties')]
                         ];
                     }),
-                    order: [[3, 'desc']], // Sort by points by default
-                    pageLength: -1,       // Show all entries
-                    lengthChange: false,  // Remove length change option
-                    info: false,         // Remove "Showing X of Y entries" text
-                    language: {
-                        url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/fr-FR.json'
-                    },
-                    createdRow: function(row, data) {
-                        // Hide rows with 0 matches by default
-                        if (parseInt(data[9]) === 0) {
-                            $(row).addClass('inactive-player').hide();
-                        }
-                    },
-                    initComplete: function() {
-                        // Populate category filter with unique values
-                        const categoryColumn = this.api().column(3);  // Category column index
-                        const categories = new Set();
-                        
-                        categoryColumn.data().each(function(value) {
-                            if (value) {
-                                categories.add(value.charAt(0));  // Get first letter only
-                            }
-                        });
-                        
-                        const sortedCategories = Array.from(categories).sort();
-                        sortedCategories.forEach(function(category) {
-                            $('#categoryFilter').append(
-                                `<option value="${category}">${category}</option>`
-                            );
-                        });
-                        
-                        // Add filter handlers
-                        $('#sexeFilter').on('change', function() {
-                            const val = $(this).val();
-                            table.column(0)
-                                .search(val ? `^${val}$` : '', true, false)
-                                .draw();
-                        });
-                        
-                        $('#categoryFilter').on('change', function() {
-                            const val = $(this).val();
-                            table.column(3).search(val ? '^' + val : '', true, false).draw();
-                        });
-                    },
                     columnDefs: [{
-                        // Target the gender column (index 0)
                         targets: 0,
                         render: function(data, type, row) {
                             if (type === 'display') {
-                                // Return icon for display
                                 return formatSexe(data);
                             }
-                            // Return raw value for filtering/sorting
                             return data === 'F' ? 'F' : 'M';
                         }
-                    }]
+                    }],
+                    order: [[4, 'desc']],
+                    pageLength: -1,
+                    lengthChange: false,
+                    info: false,
+                    language: {
+                        url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/fr-FR.json'
+                    }
                 });
 
+                // Gender filter handler
+                $('#sexeFilter').on('change', function() {
+                    const val = $(this).val();
+                    table.column(0)
+                        .search(val ? `^${val}$` : '', true, false)
+                        .draw();
+                });
+                
                 // Replace select options with icons for gender
                 $('#sexeFilter option[value="M"]').html('<i class="fa-solid fa-person text-primary"></i> Hommes');
                 $('#sexeFilter option[value="F"]').html('<i class="fa-solid fa-person-dress text-danger"></i> Femmes');
