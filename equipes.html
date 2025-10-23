@@ -2,12 +2,20 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>USFTT - Classement individuel</title>
+    <title>USFTT - Résultats par équipes</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css" rel="stylesheet">
     <style>
         body { padding: 20px; }
-        .container { max-width: 1200px; }
+        .container { max-width: 1400px; }
         .nav-link.active { font-weight: bold; }
+        .team-title { margin-top: 30px; margin-bottom: 20px; }
+        .match-score { font-weight: bold; }
+        .team-table { margin-bottom: 40px; }
+        .victory { color: #198754; }
+        .defeat { color: #dc3545; }
+        .draw { color: #6c757d; }
     </style>
 </head>
 <body>
@@ -37,10 +45,394 @@
     </nav>
 
     <div class="container">
-        <h1>Classement individuel</h1>
-        <!-- Add content here -->
+        <h1 class="mb-4">Résultats par équipes</h1>
+        
+        <div class="row mb-3">
+            <div class="col">
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-outline-primary active" data-filter="all">Toutes les équipes</button>
+                    <button type="button" class="btn btn-outline-primary" data-filter="masculin">Équipes masculines</button>
+                    <button type="button" class="btn btn-outline-primary" data-filter="feminin">Équipes féminines</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="teams-container">
+            <!-- Teams will be dynamically loaded here -->
+        </div>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
+    
+    <script>
+    const teamsData = [
+        {
+            name: "FONTENAY USTT 1 (M)",
+            division: "Nationale 2 Messieurs - Phase 1 Poule 3",
+            gender: "masculin",
+            matches: [
+                { home: "FONTENAY USTT 1", away: "SAINT LAURENT BLANGY TTI 1", scoreHome: "8", scoreAway: "0", date: "13/09/2025" },
+                { home: "PARIS 13 TT 1", away: "FONTENAY USTT 1", scoreHome: "4", scoreAway: "8", date: "27/09/2025" },
+                { home: "FONTENAY USTT 1", away: "ABBEVILLE ACTT 1", scoreHome: "1", scoreAway: "8", date: "11/10/2025" },
+                { home: "ROUEN SPO 3", away: "FONTENAY USTT 1", scoreHome: null, scoreAway: null, date: "15/11/2025" },
+                { home: "FONTENAY USTT 1", away: "MULHOUSE TT 1", scoreHome: null, scoreAway: null, date: "29/11/2025" },
+                { home: "LA ROMAGNE SS 3", away: "FONTENAY USTT 1", scoreHome: null, scoreAway: null, date: "13/12/2025" },
+                { home: "FONTENAY USTT 1", away: "NEUVES MAISONS 1", scoreHome: null, scoreAway: null, date: "10/01/2026" }
+            ]
+        },
+        {
+            name: "FONTENAY USTT 2 (M)",
+            division: "Nationale 3 Messieurs - Phase 1 Poule 13",
+            gender: "masculin",
+            matches: [
+                { home: "FONTENAY USTT 2", away: "UCHAUD ENT / NIMES ASPC 1", scoreHome: "8", scoreAway: "3", date: "13/09/2025" },
+                { home: "ISTRES TT 3", away: "FONTENAY USTT 2", scoreHome: "7", scoreAway: "7", date: "27/09/2025" },
+                { home: "FONTENAY USTT 2", away: "ASPTT ALBI 1", scoreHome: "6", scoreAway: "8", date: "11/10/2025" },
+                { home: "REUILLY ESPERANCE 1", away: "FONTENAY USTT 2", scoreHome: null, scoreAway: null, date: "15/11/2025" },
+                { home: "FONTENAY USTT 2", away: "LESCARIENNE TT 1", scoreHome: null, scoreAway: null, date: "29/11/2025" },
+                { home: "BIARRITZ GOELANDS 1", away: "FONTENAY USTT 2", scoreHome: null, scoreAway: null, date: "13/12/2025" },
+                { home: "FONTENAY USTT 2", away: "MERIGNAC SA 1", scoreHome: null, scoreAway: null, date: "10/01/2026" }
+            ]
+        },
+        {
+            name: "US FONTENAY TT 3 (M)",
+            division: "PN Messieurs - Phase 1 Poule 1",
+            gender: "masculin",
+            matches: [
+                { home: "KREMLIN BICETRE US 1", away: "US Fontenay TT 3", scoreHome: "18", scoreAway: "24", date: "20/09/2025" },
+                { home: "US Fontenay TT 3", away: "COURBEVOIE STT 3", scoreHome: "22", scoreAway: "20", date: "04/10/2025" },
+                { home: "SQY PING 2", away: "US Fontenay TT 3", scoreHome: "24", scoreAway: "18", date: "11/10/2025" },
+                { home: "US Fontenay TT 3", away: "SP. PARIS 20 TT 1", scoreHome: null, scoreAway: null, date: "15/11/2025" },
+                { home: "LEVALLOIS SPORT 4", away: "US Fontenay TT 3", scoreHome: null, scoreAway: null, date: "29/11/2025" },
+                { home: "US Fontenay TT 3", away: "AL VILLECRESNES 1", scoreHome: null, scoreAway: null, date: "13/12/2025" },
+                { home: "DUCKS BONDOUFLE 2", away: "US Fontenay TT 3", scoreHome: null, scoreAway: null, date: "10/01/2026" }
+            ]
+        },
+        {
+            name: "US FONTENAY TT 4 (M)",
+            division: "R2 Messieurs - Phase 1 Poule 4",
+            gender: "masculin",
+            matches: [
+                { home: "VERSAILLES SCTT 3", away: "US FONTENAY TT 4", scoreHome: "21", scoreAway: "21", date: "20/09/2025" },
+                { home: "US FONTENAY TT 4", away: "BEAUCHAMP CTT 1", scoreHome: "20", scoreAway: "21", date: "04/10/2025" },
+                { home: "EP 15 1", away: "US FONTENAY TT 4", scoreHome: "21", scoreAway: "21", date: "11/10/2025" },
+                { home: "US FONTENAY TT 4", away: "PONTHIERRY COMT 2", scoreHome: null, scoreAway: null, date: "15/11/2025" },
+                { home: "E.P. DE LOGNES 6", away: "US FONTENAY TT 4", scoreHome: null, scoreAway: null, date: "29/11/2025" },
+                { home: "US FONTENAY TT 4", away: "MONTMAGNY-GROSLAY 2", scoreHome: null, scoreAway: null, date: "13/12/2025" },
+                { home: "COMBS SENART TT 3", away: "US FONTENAY TT 4", scoreHome: null, scoreAway: null, date: "10/01/2026" }
+            ]
+        },
+        {
+            name: "US FONTENAY TT 5 (M)",
+            division: "R3 Messieurs - Phase 1 Poule 9",
+            gender: "masculin",
+            matches: [
+                { home: "LA FRETTE 1", away: "US FONTENAY TT 5", scoreHome: "15", scoreAway: "27", date: "20/09/2025" },
+                { home: "US FONTENAY TT 5", away: "CONFLANS US 1", scoreHome: "27", scoreAway: "15", date: "04/10/2025" },
+                { home: "CPS 10eme 1", away: "US FONTENAY TT 5", scoreHome: "15", scoreAway: "27", date: "11/10/2025" },
+                { home: "US FONTENAY TT 5", away: "SAINT REMY TT 2", scoreHome: null, scoreAway: null, date: "15/11/2025" },
+                { home: "VINCENNOIS TT 3", away: "US FONTENAY TT 5", scoreHome: null, scoreAway: null, date: "29/11/2025" },
+                { home: "US FONTENAY TT 5", away: "HERBLAY ASTT 6", scoreHome: null, scoreAway: null, date: "13/12/2025" },
+                { home: "U S 2 PARIS 1", away: "US FONTENAY TT 5", scoreHome: null, scoreAway: null, date: "10/01/2026" }
+            ]
+        },
+        {
+            name: "US FONTENAY TT 6 (M)",
+            division: "R3 Messieurs - Phase 1 Poule 4",
+            gender: "masculin",
+            matches: [
+                { home: "MENUCOURT 1", away: "US FONTENAY TT 6", scoreHome: "20", scoreAway: "22", date: "20/09/2025" },
+                { home: "US FONTENAY TT 6", away: "SANNOIS 1", scoreHome: "24", scoreAway: "18", date: "04/10/2025" },
+                { home: "MONTESSON TT 1", away: "US FONTENAY TT 6", scoreHome: "23", scoreAway: "19", date: "11/10/2025" },
+                { home: "US FONTENAY TT 6", away: "BREUILLET 1", scoreHome: null, scoreAway: null, date: "15/11/2025" },
+                { home: "CORBEIL-ESSONNES 1", away: "US FONTENAY TT 6", scoreHome: null, scoreAway: null, date: "29/11/2025" },
+                { home: "US FONTENAY TT 6", away: "SERRIS VAL D'EUROPE ATT 1", scoreHome: null, scoreAway: null, date: "13/12/2025" },
+                { home: "RUEIL ATHLETIC 6", away: "US FONTENAY TT 6", scoreHome: null, scoreAway: null, date: "10/01/2026" }
+            ]
+        },
+        {
+            name: "FONTENAY USTT 1 (F)",
+            division: "Nationale 1 Dames - Phase 1 Poule 1",
+            gender: "feminin",
+            matches: [
+                { home: "FONTENAY USTT 1", away: "MULHOUSE TT 1", scoreHome: "8", scoreAway: "2", date: "13/09/2025" },
+                { home: "SAINT DENIS TT93 2", away: "FONTENAY USTT 1", scoreHome: "2", scoreAway: "8", date: "27/09/2025" },
+                { home: "FONTENAY USTT 1", away: "FOUGERES TT / VERN US ENT 1", scoreHome: "8", scoreAway: "2", date: "11/10/2025" },
+                { home: "THORIGNE FOUILLARD TT 2", away: "FONTENAY USTT 1", scoreHome: null, scoreAway: null, date: "15/11/2025" },
+                { home: "FONTENAY USTT 1", away: "LEERS OSTT 2", scoreHome: null, scoreAway: null, date: "29/11/2025" },
+                { home: "COURBEVOIE STT 1", away: "FONTENAY USTT 1", scoreHome: null, scoreAway: null, date: "13/12/2025" },
+                { home: "FONTENAY USTT 1", away: "ECHIROLLES-EYBENS TT 1", scoreHome: null, scoreAway: null, date: "10/01/2026" }
+            ]
+        },
+        {
+            name: "FONTENAY USTT 2 (F)",
+            division: "Nationale 1 Dames - Phase 1 Poule 2",
+            gender: "feminin",
+            matches: [
+                { home: "FONTENAY USTT 2", away: "SAINT JEANNAIS / BOURGOIN ENT 1", scoreHome: "2", scoreAway: "8", date: "13/09/2025" },
+                { home: "ANNECY TT 1", away: "FONTENAY USTT 2", scoreHome: "8", scoreAway: "5", date: "27/09/2025" },
+                { home: "FONTENAY USTT 2", away: "QUEVILLY / ROUEN ENT 1", scoreHome: "2", scoreAway: "8", date: "11/10/2025" },
+                { home: "PARIS 20 SP TT 1", away: "FONTENAY USTT 2", scoreHome: null, scoreAway: null, date: "15/11/2025" },
+                { home: "FONTENAY USTT 2", away: "TTC ARLES / NIMES ENT 1", scoreHome: null, scoreAway: null, date: "29/11/2025" },
+                { home: "COURBEVOIE STT 2", away: "FONTENAY USTT 2", scoreHome: null, scoreAway: null, date: "13/12/2025" },
+                { home: "FONTENAY USTT 2", away: "JOUE LES TOURS TT 2", scoreHome: null, scoreAway: null, date: "10/01/2026" }
+            ]
+        },
+        {
+            name: "US FONTENAY TT 3 (F)",
+            division: "PN Dames - Phase 1 Poule 2",
+            gender: "feminin",
+            matches: [
+                { home: "CHATENAY ASVTT 1", away: "US FONTENAY TT 3", scoreHome: "19", scoreAway: "23", date: "20/09/2025" },
+                { home: "US FONTENAY TT 3", away: "PING-NEMOURS 1", scoreHome: "23", scoreAway: "19", date: "04/10/2025" },
+                { home: "SARTROUVILLE TT 1", away: "US FONTENAY TT 3", scoreHome: "24", scoreAway: "18", date: "11/10/2025" },
+                { home: "US FONTENAY TT 3", away: "PALAISEAU US 1", scoreHome: null, scoreAway: null, date: "15/11/2025" },
+                { home: "LEVALLOIS SC 1", away: "US FONTENAY TT 3", scoreHome: null, scoreAway: null, date: "29/11/2025" },
+                { home: "US FONTENAY TT 3", away: "BOULOGNE BILLAN 1", scoreHome: null, scoreAway: null, date: "13/12/2025" },
+                { home: "ELANCOURT CTT 1", away: "US FONTENAY TT 3", scoreHome: null, scoreAway: null, date: "10/01/2026" }
+            ]
+        },
+        {
+            name: "US FONTENAY TT 4 (F)",
+            division: "Pre-Reg. Feminine - Phase 1 Poule 1",
+            gender: "feminin",
+            matches: [
+                { home: "ORMESSON US 1", away: "US Fontenay TT 4", scoreHome: "19", scoreAway: "11", date: "27/09/2025" },
+                { home: "US Fontenay TT 4", away: "ES VITRY (2)", scoreHome: "15", scoreAway: "15", date: "04/10/2025" },
+                { home: "CVTT 1", away: "US Fontenay TT 4", scoreHome: "15", scoreAway: "15", date: "11/10/2025" },
+                { home: "CHOISY TT 1", away: "US Fontenay TT 4", scoreHome: null, scoreAway: null, date: "15/11/2025" },
+                { home: "US Fontenay TT 4", away: "PONTHIERRY COMT 1", scoreHome: null, scoreAway: null, date: "29/11/2025" },
+                { home: "MONTHYON CTT 1", away: "US Fontenay TT 4", scoreHome: null, scoreAway: null, date: "13/12/2025" },
+                { home: "US Fontenay TT 4", away: "ENT. ROISSY TT / MOUROUX TT", scoreHome: null, scoreAway: null, date: "10/01/2026" }
+            ]
+        },
+        {
+            name: "US FONTENAY TT 7 (M)",
+            division: "PR Masculine - Phase 1 Poule 3",
+            gender: "masculin",
+            matches: [
+                { home: "FONTENAYSIENNE US TT 7", away: "PERREUX APP 3", scoreHome: "25", scoreAway: "17", date: "26/09/2025" },
+                { home: "AS THIAIS TT 5", away: "FONTENAYSIENNE US TT 7", scoreHome: "17", scoreAway: "25", date: "03/10/2025" },
+                { home: "BRY PSC 1", away: "FONTENAYSIENNE US TT 7", scoreHome: "22", scoreAway: "20", date: "10/10/2025" },
+                { home: "FONTENAYSIENNE US TT 7", away: "ES VITRY 2", scoreHome: null, scoreAway: null, date: "14/11/2025" },
+                { home: "CHOISY TT 1", away: "FONTENAYSIENNE US TT 7", scoreHome: null, scoreAway: null, date: "28/11/2025" },
+                { home: "FONTENAYSIENNE US TT 7", away: "MAISONS-ALFORT TT 5", scoreHome: null, scoreAway: null, date: "12/12/2025" },
+                { home: "FRESNES AASF 1", away: "FONTENAYSIENNE US TT 7", scoreHome: null, scoreAway: null, date: "09/01/2026" }
+            ]
+        },
+        {
+            name: "US FONTENAY TT 8 (M)",
+            division: "D1 Masculine - Phase 1 Poule 3",
+            gender: "masculin",
+            matches: [
+                { home: "FONTENAYSIENNE US TT 8", away: "PERREUX APP 4", scoreHome: "33", scoreAway: "27", date: "26/09/2025" },
+                { home: "BREVANNAISE AS 3", away: "FONTENAYSIENNE US TT 8", scoreHome: "30", scoreAway: "30", date: "03/10/2025" },
+                { home: "CACHAN CO 4", away: "FONTENAYSIENNE US TT 8", scoreHome: "21", scoreAway: "36", date: "10/10/2025" },
+                { home: "FONTENAYSIENNE US TT 8", away: "FRESNES AASF 2", scoreHome: null, scoreAway: null, date: "14/11/2025" },
+                { home: "IVRY US 1", away: "FONTENAYSIENNE US TT 8", scoreHome: null, scoreAway: null, date: "28/11/2025" },
+                { home: "FONTENAYSIENNE US TT 8", away: "AL VILLECRESNES TT 6", scoreHome: null, scoreAway: null, date: "12/12/2025" },
+                { home: "ES VITRY 4", away: "FONTENAYSIENNE US TT 8", scoreHome: null, scoreAway: null, date: "09/01/2026" }
+            ]
+        },
+        {
+            name: "US FONTENAY TT 9 (M)",
+            division: "D1 Masculine - Phase 1 Poule 4",
+            gender: "masculin",
+            matches: [
+                { home: "FONTENAYSIENNE US TT 9", away: "AL VILLECRESNES TT 4", scoreHome: "27", scoreAway: "31", date: "26/09/2025" },
+                { home: "NOGENT TT 4", away: "FONTENAYSIENNE US TT 9", scoreHome: "28", scoreAway: "32", date: "03/10/2025" },
+                { home: "VGA ST MAUR US 6", away: "FONTENAYSIENNE US TT 9", scoreHome: "32", scoreAway: "28", date: "10/10/2025" },
+                { home: "FONTENAYSIENNE US TT 9", away: "ES VITRY 3", scoreHome: null, scoreAway: null, date: "14/11/2025" },
+                { home: "ALFORTVILLE US 2", away: "FONTENAYSIENNE US TT 9", scoreHome: null, scoreAway: null, date: "28/11/2025" },
+                { home: "FONTENAYSIENNE US TT 9", away: "MAISONS-ALFORT TT 7", scoreHome: null, scoreAway: null, date: "12/12/2025" },
+                { home: "PLESSIS P3T 2", away: "FONTENAYSIENNE US TT 9", scoreHome: null, scoreAway: null, date: "09/01/2026" }
+            ]
+        },
+        {
+            name: "US FONTENAY TT 10 (M)",
+            division: "D1 Masculine - Phase 1 Poule 2",
+            gender: "masculin",
+            matches: [
+                { home: "FONTENAYSIENNE US TT 10", away: "AL VILLECRESNES TT 5", scoreHome: "35", scoreAway: "25", date: "26/09/2025" },
+                { home: "AS THIAIS TT 6", away: "FONTENAYSIENNE US TT 10", scoreHome: "32", scoreAway: "28", date: "03/10/2025" },
+                { home: "PLESSIS P3T 3", away: "FONTENAYSIENNE US TT 10", scoreHome: "32", scoreAway: "28", date: "10/10/2025" },
+                { home: "FONTENAYSIENNE US TT 10", away: "CHARENTON TT 7", scoreHome: null, scoreAway: null, date: "14/11/2025" },
+                { home: "TT VINCENNOIS 5", away: "FONTENAYSIENNE US TT 10", scoreHome: null, scoreAway: null, date: "28/11/2025" },
+                { home: "FONTENAYSIENNE US TT 10", away: "VGA ST MAUR US 5", scoreHome: null, scoreAway: null, date: "12/12/2025" },
+                { home: "CRETEIL USTT 3", away: "FONTENAYSIENNE US TT 10", scoreHome: null, scoreAway: null, date: "09/01/2026" }
+            ]
+        },
+        {
+            name: "US FONTENAY TT 11 (M)",
+            division: "D3 Masculine - Phase 1 Poule 3",
+            gender: "masculin",
+            matches: [
+                { home: "FONTENAYSIENNE US TT 11", away: "CHOISY TT 3", scoreHome: "35", scoreAway: "25", date: "26/09/2025" },
+                { home: "VILLEJUIF US 1", away: "FONTENAYSIENNE US TT 11", scoreHome: "26", scoreAway: "34", date: "03/10/2025" },
+                { home: "AMICALE BOISSEENNE TT 1", away: "FONTENAYSIENNE US TT 11", scoreHome: "17", scoreAway: "40", date: "10/10/2025" },
+                { home: "FONTENAYSIENNE US TT 11", away: "PLESSIS P3T 6", scoreHome: null, scoreAway: null, date: "14/11/2025" },
+                { home: "PERREUX APP 5", away: "FONTENAYSIENNE US TT 11", scoreHome: null, scoreAway: null, date: "28/11/2025" },
+                { home: "FONTENAYSIENNE US TT 11", away: "CACHAN CO 5", scoreHome: null, scoreAway: null, date: "12/12/2025" },
+                { home: "NOGENT TT 7", away: "FONTENAYSIENNE US TT 11", scoreHome: null, scoreAway: null, date: "09/01/2026" }
+            ]
+        },
+        {
+            name: "US FONTENAY TT 12 (M)",
+            division: "D3 Masculine - Phase 1 Poule 4",
+            gender: "masculin",
+            matches: [
+                { home: "ORLY AS 1", away: "FONTENAYSIENNE US TT 12", scoreHome: "25", scoreAway: "35", date: "26/09/2025" },
+                { home: "FONTENAYSIENNE US TT 12", away: "KREMLIN-BICETRE US 7", scoreHome: "39", scoreAway: "21", date: "03/10/2025" },
+                { home: "FONTENAYSIENNE US TT 12", away: "BRY PSC 4", scoreHome: "37", scoreAway: "23", date: "10/10/2025" },
+                { home: "TT VINCENNOIS 9", away: "FONTENAYSIENNE US TT 12", scoreHome: null, scoreAway: null, date: "14/11/2025" },
+                { home: "FONTENAYSIENNE US TT 12", away: "MAISONS-ALFORT TT 9", scoreHome: null, scoreAway: null, date: "28/11/2025" },
+                { home: "ORMESSON US 7", away: "FONTENAYSIENNE US TT 12", scoreHome: null, scoreAway: null, date: "12/12/2025" },
+                { home: "FONTENAYSIENNE US TT 12", away: "IVRY US 3", scoreHome: null, scoreAway: null, date: "09/01/2026" }
+            ]
+        },
+        {
+            name: "US FONTENAY TT 13 (M)",
+            division: "D3 Masculine - Phase 1 Poule 1",
+            gender: "masculin",
+            matches: [
+                { home: "PERREUX APP 6", away: "FONTENAYSIENNE US TT 13", scoreHome: "26", scoreAway: "34", date: "26/09/2025" },
+                { home: "FONTENAYSIENNE US TT 13", away: "AS THIAIS TT 10", scoreHome: "34", scoreAway: "23", date: "03/10/2025" },
+                { home: "FONTENAYSIENNE US TT 13", away: "ST MAURICE TT 4", scoreHome: "28", scoreAway: "31", date: "10/10/2025" },
+                { home: "VGA ST MAUR US 9", away: "FONTENAYSIENNE US TT 13", scoreHome: null, scoreAway: null, date: "14/11/2025" },
+                { home: "FONTENAYSIENNE US TT 13", away: "PLESSIS P3T 7", scoreHome: null, scoreAway: null, date: "28/11/2025" },
+                { home: "ES VITRY 7", away: "FONTENAYSIENNE US TT 13", scoreHome: null, scoreAway: null, date: "12/12/2025" },
+                { home: "FONTENAYSIENNE US TT 13", away: "ALFORTVILLE US 4", scoreHome: null, scoreAway: null, date: "09/01/2026" }
+            ]
+        },
+        {
+            name: "US FONTENAY TT 14 (M)",
+            division: "D3 Masculine - Phase 1 Poule 2",
+            gender: "masculin",
+            matches: [
+                { home: "ELAN CHEVILLY 2", away: "FONTENAYSIENNE US TT 14", scoreHome: "33", scoreAway: "27", date: "26/09/2025" },
+                { home: "FONTENAYSIENNE US TT 14", away: "PLESSIS P3T 5", scoreHome: "32", scoreAway: "28", date: "03/10/2025" },
+                { home: "FONTENAYSIENNE US TT 14", away: "VGA ST MAUR US 10", scoreHome: "33", scoreAway: "27", date: "10/10/2025" },
+                { home: "ST MAURICE TT 3", away: "FONTENAYSIENNE US TT 14", scoreHome: null, scoreAway: null, date: "14/11/2025" },
+                { home: "FONTENAYSIENNE US TT 14", away: "NOGENT TT 6", scoreHome: null, scoreAway: null, date: "28/11/2025" },
+                { home: "ORMESSON US 6", away: "FONTENAYSIENNE US TT 14", scoreHome: null, scoreAway: null, date: "12/12/2025" },
+                { home: "FONTENAYSIENNE US TT 14", away: "IVRY US 4", scoreHome: null, scoreAway: null, date: "09/01/2026" }
+            ]
+        },
+        {
+            name: "US FONTENAY TT 15 (M)",
+            division: "D4 Masculine - Phase 1 Poule 1",
+            gender: "masculin",
+            matches: [
+                { home: "ELAN CHEVILLY 5", away: "FONTENAYSIENNE US TT 15", scoreHome: "0", scoreAway: "40", date: "26/09/2025" },
+                { home: "FONTENAYSIENNE US TT 15", away: "AS THIAIS TT 11", scoreHome: "29", scoreAway: "31", date: "03/10/2025" },
+                { home: "FONTENAYSIENNE US TT 15", away: "TT VINCENNOIS 10", scoreHome: "22", scoreAway: "38", date: "10/10/2025" },
+                { home: "CACHAN CO 6", away: "FONTENAYSIENNE US TT 15", scoreHome: null, scoreAway: null, date: "14/11/2025" },
+                { home: "FONTENAYSIENNE US TT 15", away: "ORMESSON US 11", scoreHome: null, scoreAway: null, date: "28/11/2025" },
+                { home: "ES VILLIERS 6", away: "FONTENAYSIENNE US TT 15", scoreHome: null, scoreAway: null, date: "12/12/2025" },
+                { home: "FONTENAYSIENNE US TT 15", away: "RUNGIS PING 2", scoreHome: null, scoreAway: null, date: "09/01/2026" }
+            ]
+        },
+        {
+            name: "US FONTENAY TT 16 (M)",
+            division: "D4 Masculine - Phase 1 Poule 3",
+            gender: "masculin",
+            matches: [
+                { home: "AL VILLECRESNES TT 8", away: "FONTENAYSIENNE US TT 16", scoreHome: "34", scoreAway: "26", date: "26/09/2025" },
+                { home: "FONTENAYSIENNE US TT 16", away: "KREMLIN-BICETRE US 9", scoreHome: "35", scoreAway: "25", date: "03/10/2025" },
+                { home: "FONTENAYSIENNE US TT 16", away: "VGA ST MAUR US 11", scoreHome: "25", scoreAway: "35", date: "10/10/2025" },
+                { home: "SUCY ES 4", away: "FONTENAYSIENNE US TT 16", scoreHome: null, scoreAway: null, date: "14/11/2025" },
+                { home: "FONTENAYSIENNE US TT 16", away: "ORMESSON US 8", scoreHome: null, scoreAway: null, date: "28/11/2025" },
+                { home: "MAISONS-ALFORT TT 10", away: "FONTENAYSIENNE US TT 16", scoreHome: null, scoreAway: null, date: "12/12/2025" },
+                { home: "FONTENAYSIENNE US TT 16", away: "ELAN CHEVILLY 3", scoreHome: null, scoreAway: null, date: "09/01/2026" }
+            ]
+        }
+    ];
+
+    function createTeamSection(team) {
+        const tableId = `table-${team.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+/g, '-').replace(/(^-|-$)/g, '')}`;
+        const section = document.createElement('div');
+        section.className = `team-section ${team.gender}`;
+        
+        section.innerHTML = `
+            <h2 class="team-title">${team.name}</h2>
+            <h4 class="text-muted mb-4">${team.division}</h4>
+            <table id="${tableId}" class="table table-striped team-table" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Domicile</th>
+                        <th>Score</th>
+                        <th>Extérieur</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${team.matches.map(match => {
+                        let scoreClass = '';
+                        let scoreText = match.scoreHome === null ? 'À venir' : `${match.scoreHome}-${match.scoreAway}`;
+                        
+                        if (match.scoreHome !== null) {
+                            const isHomeTeam = match.home.includes('FONTENAY');
+                            const homeScore = parseInt(match.scoreHome);
+                            const awayScore = parseInt(match.scoreAway);
+                            
+                            if (homeScore === awayScore) {
+                                scoreClass = 'draw';
+                            } else if ((isHomeTeam && homeScore > awayScore) || (!isHomeTeam && homeScore < awayScore)) {
+                                scoreClass = 'victory';
+                            } else {
+                                scoreClass = 'defeat';
+                            }
+                        }
+                        
+                        return `
+                            <tr>
+                                <td>${match.date}</td>
+                                <td>${match.home}</td>
+                                <td class="match-score ${scoreClass}">${scoreText}</td>
+                                <td>${match.away}</td>
+                            </tr>
+                        `;
+                    }).join('')}
+                </tbody>
+            </table>
+        `;
+        return section;
+    }
+
+    $(document).ready(function() {
+        const container = document.getElementById('teams-container');
+        
+        teamsData.forEach(team => {
+            container.appendChild(createTeamSection(team));
+            const safeTableId = team.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+/g, '-').replace(/(^-|-$)/g, '');
+            $(`#table-${safeTableId}`).DataTable({
+                responsive: true,
+                paging: false,
+                searching: false,
+                info: false,
+                order: [[0, 'asc']]
+            });
+        });
+
+        // Filter functionality
+        $('.btn-group .btn').click(function() {
+            $('.btn-group .btn').removeClass('active');
+            $(this).addClass('active');
+            
+            const filter = $(this).data('filter');
+            if (filter === 'all') {
+                $('.team-section').show();
+            } else {
+                $('.team-section').hide();
+                $(`.team-section.${filter}`).show();
+            }
+        });
+    });
+    </script>
 </body>
 </html>
