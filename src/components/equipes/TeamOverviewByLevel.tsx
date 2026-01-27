@@ -18,7 +18,7 @@ function getDivisionLevel(division: string): 'Nationale' | 'Régionale' | 'Dépa
   if (div.includes('R1') || div.includes('R2') || div.includes('R3') || div.includes('REG') || div.includes('PN')) {
     return 'Régionale'
   }
-  if (div.includes('D1') || div.includes('D2') || div.includes('D3') || div.includes('DEP') || div.includes('PR')) {
+  if (div.includes('D1') || div.includes('D2') || div.includes('D3') || div.includes('D4') || div.includes('DEP') || div.includes('PR')) {
     return 'Départementale'
   }
   return 'Autre'
@@ -45,10 +45,10 @@ export function TeamOverviewByLevel({ teams, onSelectTeam }: TeamOverviewByLevel
 
   // Define level order and display info
   const levels = [
-    { key: 'Nationale', label: 'Équipes Nationales', color: 'text-yellow-700' },
+    { key: 'Nationale', label: 'Équipes Nationales', color: 'text-gray-700' },
     { key: 'Régionale', label: 'Équipes Régionales', color: 'text-gray-700' },
-    { key: 'Départementale', label: 'Équipes Départementales', color: 'text-orange-700' },
-    { key: 'Autre', label: 'Autres Équipes', color: 'text-blue-700' },
+    { key: 'Départementale', label: 'Équipes Départementales', color: 'text-gray-700' },
+    { key: 'Autre', label: 'Autres Équipes', color: 'text-gray-700' },
   ] as const
 
   return (

@@ -6,13 +6,15 @@ interface TeamCardProps {
   onSelect: () => void
 }
 
-// Helper to get division color
-function getDivisionColor(division: string): string {
-  const div = division.toUpperCase()
-  if (div.includes('N1') || div.includes('NAT')) return 'bg-yellow-100 text-yellow-800 border-yellow-300'
-  if (div.includes('R1') || div.includes('REG')) return 'bg-gray-200 text-gray-800 border-gray-400'
-  if (div.includes('D1') || div.includes('DEP')) return 'bg-orange-100 text-orange-800 border-orange-300'
-  return 'bg-blue-100 text-blue-800 border-blue-300'
+// Helper to get division color based on gender
+function getDivisionColor(gender: string): string {
+  if (gender === 'G') {
+    // Blue for men
+    return 'bg-blue-100 text-blue-800 border-blue-300'
+  } else {
+    // Pink for women
+    return 'bg-pink-100 text-pink-800 border-pink-300'
+  }
 }
 
 export function TeamCard({ team, onSelect }: TeamCardProps) {
@@ -60,19 +62,14 @@ export function TeamCard({ team, onSelect }: TeamCardProps) {
     >
       {/* Team Header */}
       <div className="mb-4">
-        <div className="flex items-start justify-between mb-2">
+        <div className="flex items-start gap-2 mb-2">
+          <span className={cn('text-xs font-medium px-2 py-1 rounded border', getDivisionColor(team.gender))}>
+            {team.division}
+          </span>
           <h3 className="text-lg font-semibold text-gray-900" data-testid="team-name">
             {team.name}
           </h3>
-          <span className={cn('text-xs font-medium px-2 py-1 rounded border', getDivisionColor(team.division))}>
-            {team.division}
-          </span>
         </div>
-
-        {/* Gender Badge */}
-        <span className="text-sm text-gray-500">
-          {team.gender === 'G' ? '👨 Masculine' : '👩 Féminine'}
-        </span>
       </div>
 
       {/* Stats Grid */}
