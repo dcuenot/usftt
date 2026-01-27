@@ -4,7 +4,7 @@ import { Competitor } from '@/types/competitor.types'
 import { CSV_PATHS } from '@/constants/config'
 
 export function useCompetitorData() {
-  const { data: rawData, loading, error } = useCsvData<any>(CSV_PATHS.COMPETITORS)
+  const { data: rawData, loading, error, lastModified } = useCsvData<any>(CSV_PATHS.COMPETITORS)
 
   const competitors: Competitor[] = useMemo(() => {
     return rawData.map((row) => ({
@@ -24,5 +24,5 @@ export function useCompetitorData() {
     }))
   }, [rawData])
 
-  return { competitors, loading, error }
+  return { competitors, loading, error, lastModified }
 }

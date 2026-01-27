@@ -1,17 +1,23 @@
 import { useMemo, useState } from 'react'
-import { ColumnDef } from '@tanstack/react-table'
 import { useCompetitorData } from '@/hooks/useCompetitorData'
 import { Competitor } from '@/types/competitor.types'
-import { Table } from '@/components/ui/Table'
+import { ResponsiveTable, ResponsiveColumnDef } from '@/components/ui/ResponsiveTable'
 import { ProgressionBadge } from '@/components/shared/ProgressionBadge'
 import { GenderIcon } from '@/components/shared/GenderIcon'
+import { LastUpdate } from '@/components/shared/LastUpdate'
+import { FilterPanel } from '@/components/ui/FilterPanel'
+import { PlayerRankingCard } from '@/components/classement/PlayerRankingCard'
+import { SkeletonCard } from '@/components/ui/SkeletonCard'
+import { SkeletonTable } from '@/components/ui/SkeletonTable'
 import { Eye, EyeOff } from 'lucide-react'
+import { useIsMobile } from '@/hooks/useMediaQuery'
 
 export function ClassementPage() {
-  const { competitors, loading, error } = useCompetitorData()
+  const { competitors, loading, error, lastModified } = useCompetitorData()
   const [genderFilter, setGenderFilter] = useState<'' | 'M' | 'F'>('')
   const [categoryFilter, setCategoryFilter] = useState<string>('')
   const [showInactive, setShowInactive] = useState(false)
+  const isMobile = useIsMobile()
 
   // Extract unique categories for filter
   const categories = useMemo(() => {
@@ -35,14 +41,15 @@ export function ClassementPage() {
     })
   }, [competitors, genderFilter, categoryFilter, showInactive])
 
-  // Define table columns
-  const columns = useMemo<ColumnDef<Competitor>[]>(
+  // Define table columns with priorities
+  const columns = useMemo<ResponsiveColumnDef<Competitor>[]>(
     () => [
       {
         accessorKey: 'sexe',
         header: '',
         cell: ({ row }) => <GenderIcon gender={row.original.sexe} />,
         enableSorting: false,
+        priority: 'high', // Always visible
       },
       {
         id: 'nom',
@@ -51,10 +58,12 @@ export function ClassementPage() {
         cell: ({ row }) => (
           <span>{row.original.prenom} {row.original.nom}</span>
         ),
+        priority: 'high', // Always visible
       },
       {
         accessorKey: 'cat',
         header: 'Cat',
+        priority: 'medium', // Hidden on mobile
       },
       {
         accessorKey: 'point',
@@ -62,6 +71,7 @@ export function ClassementPage() {
         cell: ({ row }) => (
           <span className="font-medium">{Math.round(row.original.point)}</span>
         ),
+        priority: 'high', // Always visible
       },
       {
         accessorKey: 'prg_m',
@@ -69,6 +79,7 @@ export function ClassementPage() {
         cell: ({ row }) => (
           <ProgressionBadge value={row.original.prg_m} />
         ),
+        priority: 'high', // Always visible
       },
       {
         accessorKey: 'prg_p',
@@ -76,6 +87,7 @@ export function ClassementPage() {
         cell: ({ row }) => (
           <ProgressionBadge value={row.original.prg_p} />
         ),
+        priority: 'low', // Hidden on mobile and tablet
       },
       {
         accessorKey: 'prg_a',
@@ -83,10 +95,12 @@ export function ClassementPage() {
         cell: ({ row }) => (
           <ProgressionBadge value={row.original.prg_a} />
         ),
+        priority: 'low', // Hidden on mobile and tablet
       },
       {
         accessorKey: 'parties',
         header: 'Nb matchs',
+        priority: 'medium', // Hidden on mobile
       },
     ],
     []
@@ -95,10 +109,22 @@ export function ClassementPage() {
   if (loading) {
     return (
       <div>
-        <h1>Classement individuel</h1>
-        <div className="flex items-center justify-center py-12">
-          <div className="text-gray-600">Chargement des données...</div>
+        {/* Page Header */}
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="mb-0">Classement individuel</h1>
+          <LastUpdate lastModified={null} loading={true} variant="relative" />
         </div>
+
+        {/* Skeleton */}
+        {isMobile ? (
+          <div className="grid grid-cols-1 gap-4">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <SkeletonCard key={i} />
+            ))}
+          </div>
+        ) : (
+          <SkeletonTable rows={10} columns={6} />
+        )}
       </div>
     )
   }
@@ -116,21 +142,25 @@ export function ClassementPage() {
   }
 
   return (
-    <div>
-      <h1>Classement individuel</h1>
+    <div className="space-y-6">
+      {/* Page Header */}
+      <div className="flex items-center justify-between">
+        <h1 className="mb-0">Classement individuel</h1>
+        <LastUpdate lastModified={lastModified} loading={loading} variant="relative" />
+      </div>
 
       {/* Filters */}
-      <div className="mb-4 flex flex-wrap gap-4">
+      <FilterPanel>
         {/* Gender Filter */}
-        <div className="flex-1 min-w-[200px]">
+        <div className="flex-1 min-w-[150px]">
           <label htmlFor="genderFilter" className="block text-sm font-medium text-gray-700 mb-2">
-            Sexe:
+            Sexe
           </label>
           <select
             id="genderFilter"
             value={genderFilter}
             onChange={(e) => setGenderFilter(e.target.value as '' | 'M' | 'F')}
-            className="border border-gray-300 rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+            className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
           >
             <option value="">Tous</option>
             <option value="M">Masculin</option>
@@ -139,15 +169,15 @@ export function ClassementPage() {
         </div>
 
         {/* Category Filter */}
-        <div className="flex-1 min-w-[200px]">
+        <div className="flex-1 min-w-[150px]">
           <label htmlFor="categoryFilter" className="block text-sm font-medium text-gray-700 mb-2">
-            Catégorie:
+            Catégorie
           </label>
           <select
             id="categoryFilter"
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
-            className="border border-gray-300 rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+            className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
           >
             <option value="">Toutes</option>
             {categories.map((cat) => (
@@ -162,7 +192,7 @@ export function ClassementPage() {
         <div className="flex items-end">
           <button
             onClick={() => setShowInactive(!showInactive)}
-            className="border border-gray-300 rounded px-4 py-2 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent flex items-center gap-2"
+            className="border border-gray-300 rounded px-4 py-2 bg-white hover:bg-gray-50 transition-colors flex items-center gap-2 whitespace-nowrap"
           >
             {showInactive ? (
               <>
@@ -177,19 +207,25 @@ export function ClassementPage() {
             )}
           </button>
         </div>
-      </div>
+      </FilterPanel>
 
       {/* Player count */}
-      <div className="mb-3 text-sm text-gray-600">
+      <div className="text-sm text-gray-600">
         {filteredCompetitors.length} joueur{filteredCompetitors.length > 1 ? 's' : ''}
         {!showInactive && ' (joueurs actifs uniquement)'}
       </div>
 
-      {/* Table */}
-      <Table
+      {/* Responsive Table/Cards */}
+      <ResponsiveTable
         data={filteredCompetitors}
         columns={columns}
         defaultSorting={[{ id: 'point', desc: true }]}
+        mobileCard={(competitor) => (
+          <PlayerRankingCard
+            competitor={competitor}
+            rank={filteredCompetitors.indexOf(competitor) + 1}
+          />
+        )}
       />
     </div>
   )

@@ -1,22 +1,31 @@
+import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { ErrorBoundary } from './components/ErrorBoundary'
 import { Layout } from './components/layout/Layout'
-import { HomePage } from './pages/HomePage'
-import { ClassementPage } from './pages/ClassementPage'
-import { EquipesPage } from './pages/EquipesPage'
-import { TestsPage } from './pages/TestsPage'
+import { LoadingBar } from './components/ui/LoadingBar'
+
+// Lazy load page components for code splitting
+const HomePage = lazy(() => import('./pages/HomePage').then(m => ({ default: m.HomePage })))
+const ClassementPage = lazy(() => import('./pages/ClassementPage').then(m => ({ default: m.ClassementPage })))
+const EquipesPage = lazy(() => import('./pages/EquipesPage').then(m => ({ default: m.EquipesPage })))
+const TestsPage = lazy(() => import('./pages/TestsPage').then(m => ({ default: m.TestsPage })))
 
 function App() {
   return (
-    <BrowserRouter basename="/usftt">
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<HomePage />} />
-          <Route path="classement" element={<ClassementPage />} />
-          <Route path="equipes" element={<EquipesPage />} />
-          <Route path="tests" element={<TestsPage />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <ErrorBoundary>
+      <BrowserRouter basename="/usftt">
+        <Suspense fallback={<LoadingBar />}>
+          <Routes>
+            <Route path="/" element={<Layout />}>
+              <Route index element={<HomePage />} />
+              <Route path="classement" element={<ClassementPage />} />
+              <Route path="equipes" element={<EquipesPage />} />
+              <Route path="tests" element={<TestsPage />} />
+            </Route>
+          </Routes>
+        </Suspense>
+      </BrowserRouter>
+    </ErrorBoundary>
   )
 }
 
