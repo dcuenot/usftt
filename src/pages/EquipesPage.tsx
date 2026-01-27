@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useTeamData } from '@/hooks/useTeamData'
 import { LastUpdate } from '@/components/shared/LastUpdate'
-import { TeamOverviewView } from '@/components/equipes/TeamOverviewView'
+import { TeamOverviewByLevel } from '@/components/equipes/TeamOverviewByLevel'
 import { TeamDetailView } from '@/components/equipes/TeamDetailView'
 import { SkeletonCard } from '@/components/ui/SkeletonCard'
 
@@ -144,8 +144,8 @@ export function EquipesPage() {
         {filteredTeams.length} équipe{filteredTeams.length > 1 ? 's' : ''}
       </div>
 
-      {/* Team Overview Grid */}
-      <TeamOverviewView
+      {/* Team Overview by Division Level */}
+      <TeamOverviewByLevel
         teams={filteredTeams}
         onSelectTeam={setSelectedTeamId}
       />

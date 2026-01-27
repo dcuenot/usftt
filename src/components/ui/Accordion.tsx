@@ -1,40 +1,54 @@
-import { useState } from 'react'
+import { useState, ReactNode } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { cn } from '@/utils/cn'
 
 interface AccordionProps {
-  trigger: React.ReactNode
-  content: React.ReactNode
+  trigger?: ReactNode
+  content?: ReactNode
+  title?: ReactNode
+  children?: ReactNode
   defaultOpen?: boolean
+  className?: string
 }
 
-export function Accordion({ trigger, content, defaultOpen = false }: AccordionProps) {
+export function Accordion({
+  trigger,
+  content,
+  title,
+  children,
+  defaultOpen = false,
+  className,
+}: AccordionProps) {
   const [isOpen, setIsOpen] = useState(defaultOpen)
 
+  // Support both trigger/content and title/children patterns
+  const triggerContent = trigger ?? title
+  const bodyContent = content ?? children
+
   return (
-    <div className="border-t border-gray-200" data-testid="accordion">
+    <div className={cn('border border-gray-200 rounded-lg overflow-hidden', className)} data-testid="accordion">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between py-4 text-left hover:bg-gray-50 transition-colors"
+        className="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors"
         aria-expanded={isOpen}
       >
-        {trigger}
+        {triggerContent}
         <ChevronDown
           className={cn(
-            'w-5 h-5 text-gray-500 transition-transform duration-200',
+            'w-5 h-5 text-gray-500 transition-transform duration-200 flex-shrink-0 ml-2',
             isOpen && 'transform rotate-180'
           )}
         />
       </button>
       <div
         className={cn(
-          'overflow-hidden transition-all duration-200',
-          isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+          'overflow-hidden transition-all duration-300',
+          isOpen ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'
         )}
         data-testid="accordion-content"
       >
-        <div className="pb-4">
-          {content}
+        <div className="px-4 pb-4">
+          {bodyContent}
         </div>
       </div>
     </div>
