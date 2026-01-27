@@ -23,9 +23,9 @@ export function MatchResultList({ matches, tourNumbers }: MatchResultListProps) 
         const match = matches.find(m => m.tour === tour)
 
         // Check if match exists and has scores
-        const homeScore = match?.score_domicile?.trim()
-        const awayScore = match?.score_exterieur?.trim()
-        const hasScores = homeScore && awayScore && homeScore !== '' && awayScore !== ''
+        const homeScore = String(match?.score_domicile || '').trim()
+        const awayScore = String(match?.score_exterieur || '').trim()
+        const hasScores = homeScore !== '' && awayScore !== ''
 
         if (!match || !hasScores) {
           return (

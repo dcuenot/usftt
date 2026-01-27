@@ -21,9 +21,9 @@ export function TeamCard({ team, onSelect }: TeamCardProps) {
 
   // Filter played matches (both scores are not empty)
   const playedMatches = matches.filter(m => {
-    const homeScore = m.score_domicile?.trim()
-    const awayScore = m.score_exterieur?.trim()
-    return homeScore && awayScore && homeScore !== '' && awayScore !== ''
+    const homeScore = String(m.score_domicile || '').trim()
+    const awayScore = String(m.score_exterieur || '').trim()
+    return homeScore !== '' && awayScore !== ''
   })
 
   // Calculate victories, defeats, draws
