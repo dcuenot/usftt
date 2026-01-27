@@ -1,28 +1,28 @@
 import { useMemo, useState } from 'react'
 import { ColumnDef } from '@tanstack/react-table'
-import { usePlayerData } from '@/hooks/usePlayerData'
-import { Player } from '@/types/player.types'
+import { useCompetitorData } from '@/hooks/useCompetitorData'
+import { Competitor } from '@/types/competitor.types'
 import { Table } from '@/components/ui/Table'
 import { ProgressionBadge } from '@/components/shared/ProgressionBadge'
 
 export function HomePage() {
-  const { players, loading, error } = usePlayerData()
+  const { competitors, loading, error } = useCompetitorData()
   const [categoryFilter, setCategoryFilter] = useState<string>('')
 
   // Extract unique categories for filter
   const categories = useMemo(() => {
-    const uniqueCategories = new Set(players.map(p => p.categ).filter(Boolean))
+    const uniqueCategories = new Set(competitors.map(c => c.cat).filter(Boolean))
     return Array.from(uniqueCategories).sort()
-  }, [players])
+  }, [competitors])
 
-  // Filter players by category
-  const filteredPlayers = useMemo(() => {
-    if (!categoryFilter) return players
-    return players.filter(p => p.categ === categoryFilter)
-  }, [players, categoryFilter])
+  // Filter competitors by category
+  const filteredCompetitors = useMemo(() => {
+    if (!categoryFilter) return competitors
+    return competitors.filter(c => c.cat === categoryFilter)
+  }, [competitors, categoryFilter])
 
   // Define table columns
-  const columns = useMemo<ColumnDef<Player>[]>(
+  const columns = useMemo<ColumnDef<Competitor>[]>(
     () => [
       {
         accessorKey: 'licence',
@@ -37,44 +37,39 @@ export function HomePage() {
         header: 'Nom',
       },
       {
-        accessorKey: 'categ',
+        accessorKey: 'cat',
         header: 'Catégorie',
       },
       {
         accessorKey: 'point',
         header: 'Points',
         cell: ({ row }) => (
-          <span className="font-medium">{row.original.point}</span>
+          <span className="font-medium">{Math.round(row.original.point)}</span>
         ),
       },
       {
-        accessorKey: 'aclglob',
-        header: 'Aclglob',
+        accessorKey: 'parties',
+        header: 'Nb matchs',
       },
       {
-        accessorKey: 'apoint',
-        header: 'Apoint',
-      },
-      {
-        accessorKey: 'valcla',
-        header: 'Valcla',
-      },
-      {
-        accessorKey: 'valinit',
-        header: 'Valinit',
-      },
-      {
-        accessorKey: 'progressionMensuelle',
-        header: 'Progression Mensuelle',
+        accessorKey: 'prg_m',
+        header: 'Prog. Mensuelle',
         cell: ({ row }) => (
-          <ProgressionBadge value={row.original.progressionMensuelle} />
+          <ProgressionBadge value={row.original.prg_m} />
         ),
       },
       {
-        accessorKey: 'progressionPhase',
-        header: 'Progression Phase',
+        accessorKey: 'prg_p',
+        header: 'Prog. Phase',
         cell: ({ row }) => (
-          <ProgressionBadge value={row.original.progressionPhase} />
+          <ProgressionBadge value={row.original.prg_p} />
+        ),
+      },
+      {
+        accessorKey: 'prg_a',
+        header: 'Prog. Annuelle',
+        cell: ({ row }) => (
+          <ProgressionBadge value={row.original.prg_a} />
         ),
       },
     ],
@@ -130,13 +125,13 @@ export function HomePage() {
 
       {/* Players count */}
       <div className="mb-3 text-sm text-gray-600">
-        {filteredPlayers.length} joueur{filteredPlayers.length > 1 ? 's' : ''}
+        {filteredCompetitors.length} joueur{filteredCompetitors.length > 1 ? 's' : ''}
         {categoryFilter && ` dans la catégorie ${categoryFilter}`}
       </div>
 
       {/* Table */}
       <Table
-        data={filteredPlayers}
+        data={filteredCompetitors}
         columns={columns}
         defaultSorting={[{ id: 'point', desc: true }]}
       />
