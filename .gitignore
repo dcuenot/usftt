@@ -9,3 +9,6 @@ dist-ssr
 *.local
 .vite
 .DS_Store
+
+# CSV files in public are copies from backend/ (for dev server)
+public/backend/*.csv
