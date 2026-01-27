@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply antialiased;
+  }
+
+  h1 {
+    @apply text-3xl font-bold mb-4;
+  }
+}
+
+@layer components {
+  .table-cell-numeric {
+    @apply text-right tabular-nums;
+  }
+
+  .progression-badge {
+    @apply inline-block rounded px-2 py-1 text-sm font-medium;
+  }
+
+  .progression-positive {
+    @apply text-victory;
+  }
+
+  .progression-negative {
+    @apply text-defeat;
+  }
+}

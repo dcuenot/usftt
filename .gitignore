@@ -1,2 +1,15 @@
 .env
 *.log
+.vscode/
+
+# React/Vite
+node_modules
+dist
+dist-ssr
+*.local
+.vite
+.DS_Store
+tsconfig.tsbuildinfo
+
+# CSV files in public are copies from backend/ (for dev server)
+public/backend/*.csv
