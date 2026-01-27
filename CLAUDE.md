@@ -70,8 +70,6 @@ nvm use 20
 
 **Production site**: https://dcuenot.github.io/usftt/
 
-**Important for Salesforce developers**: This project uses the public npm registry (configured in `.npmrc`), not Salesforce's internal Nexus proxy. This is required for GitHub Actions CI/CD to work.
-
 **Project structure**:
 - `src/components/` - React components (layout, ui, shared)
 - `src/pages/` - Route pages (HomePage, ClassementPage, EquipesPage, TestsPage)
