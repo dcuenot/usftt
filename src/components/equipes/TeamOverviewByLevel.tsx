@@ -15,10 +15,10 @@ function getDivisionLevel(division: string): 'Nationale' | 'Régionale' | 'Dépa
   if (div.includes('N1') || div.includes('N2') || div.includes('N3') || div.includes('NAT')) {
     return 'Nationale'
   }
-  if (div.includes('R1') || div.includes('R2') || div.includes('R3') || div.includes('REG')) {
+  if (div.includes('R1') || div.includes('R2') || div.includes('R3') || div.includes('REG') || div.includes('PN')) {
     return 'Régionale'
   }
-  if (div.includes('D1') || div.includes('D2') || div.includes('D3') || div.includes('DEP')) {
+  if (div.includes('D1') || div.includes('D2') || div.includes('D3') || div.includes('DEP') || div.includes('PR')) {
     return 'Départementale'
   }
   return 'Autre'
