@@ -1,10 +1,15 @@
 import { useMemo, useState } from 'react'
 import { useTeamData } from '@/hooks/useTeamData'
-import { MatchResultCell } from '@/components/shared/MatchResultCell'
+import { LastUpdate } from '@/components/shared/LastUpdate'
+import { TeamOverviewView } from '@/components/equipes/TeamOverviewView'
+import { TeamDetailView } from '@/components/equipes/TeamDetailView'
+import { SkeletonCard } from '@/components/ui/SkeletonCard'
 
 export function EquipesPage() {
-  const { teams, loading, error } = useTeamData()
+  const { teams, loading, error, lastModified } = useTeamData()
   const [genderFilter, setGenderFilter] = useState<'all' | 'G' | 'F'>('all')
+  const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null)
+  const [selectedTour, setSelectedTour] = useState<string>('1')
 
   // Filter teams by gender
   const filteredTeams = useMemo(() => {
@@ -26,12 +31,32 @@ export function EquipesPage() {
       .map((t) => t.toString())
   }, [teams])
 
+  // Get selected team
+  const selectedTeam = useMemo(() => {
+    if (!selectedTeamId) return null
+    return teams.find(team => team.id === selectedTeamId) || null
+  }, [selectedTeamId, teams])
+
+  // Handle back to overview
+  const handleBack = () => {
+    setSelectedTeamId(null)
+    setSelectedTour('1') // Reset to first tour
+  }
+
   if (loading) {
     return (
       <div>
-        <h1>Résultats par équipes</h1>
-        <div className="flex items-center justify-center py-12">
-          <div className="text-gray-600">Chargement des données...</div>
+        {/* Page Header */}
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="mb-0">Résultats par équipes</h1>
+          <LastUpdate lastModified={null} loading={true} variant="relative" />
+        </div>
+
+        {/* Skeleton */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <SkeletonCard key={i} />
+          ))}
         </div>
       </div>
     )
@@ -49,12 +74,39 @@ export function EquipesPage() {
     )
   }
 
+  // Show detail view if team is selected
+  if (selectedTeam) {
+    return (
+      <div className="space-y-6">
+        {/* Page Header */}
+        <div className="flex items-center justify-between">
+          <h1 className="mb-0">Résultats par équipes</h1>
+          <LastUpdate lastModified={lastModified} loading={loading} variant="relative" />
+        </div>
+
+        {/* Team Detail View */}
+        <TeamDetailView
+          team={selectedTeam}
+          tours={tours}
+          selectedTour={selectedTour}
+          onTourChange={setSelectedTour}
+          onBack={handleBack}
+        />
+      </div>
+    )
+  }
+
+  // Show overview (default)
   return (
-    <div>
-      <h1>Résultats par équipes</h1>
+    <div className="space-y-6">
+      {/* Page Header */}
+      <div className="flex items-center justify-between">
+        <h1 className="mb-0">Résultats par équipes</h1>
+        <LastUpdate lastModified={lastModified} loading={loading} variant="relative" />
+      </div>
 
       {/* Gender Filter Buttons */}
-      <div className="mb-4 flex gap-2">
+      <div className="flex flex-wrap gap-2">
         <button
           onClick={() => setGenderFilter('all')}
           className={`px-4 py-2 rounded font-medium transition-colors ${
@@ -88,57 +140,15 @@ export function EquipesPage() {
       </div>
 
       {/* Teams count */}
-      <div className="mb-3 text-sm text-gray-600">
+      <div className="text-sm text-gray-600">
         {filteredTeams.length} équipe{filteredTeams.length > 1 ? 's' : ''}
       </div>
 
-      {/* Custom Table */}
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-white border border-gray-300">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-b border-r border-gray-300 sticky left-0 bg-gray-100 z-10">
-                Équipe
-              </th>
-              {tours.map((tour) => (
-                <th
-                  key={tour}
-                  className="px-4 py-3 text-center text-sm font-semibold text-gray-700 border-b border-gray-300 min-w-[200px]"
-                >
-                  Tour {tour}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {filteredTeams.map((team) => (
-              <tr
-                key={team.id}
-                className="border-b border-gray-200 hover:bg-gray-50"
-              >
-                <td className="px-4 py-3 border-r border-gray-300 sticky left-0 bg-white z-10">
-                  <div className="font-medium text-gray-900">{team.name}</div>
-                  <div className="text-sm text-gray-600">{team.division}</div>
-                </td>
-                {tours.map((tour) => (
-                  <td
-                    key={tour}
-                    className="px-2 py-2 text-center border-gray-200"
-                  >
-                    <MatchResultCell match={team.matches[tour]} />
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {filteredTeams.length === 0 && (
-        <div className="text-center py-8 text-gray-500">
-          Aucune équipe à afficher
-        </div>
-      )}
+      {/* Team Overview Grid */}
+      <TeamOverviewView
+        teams={filteredTeams}
+        onSelectTeam={setSelectedTeamId}
+      />
     </div>
   )
 }

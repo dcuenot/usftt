@@ -4,7 +4,7 @@ import { Match, Team } from '@/types/team.types'
 import { CSV_PATHS } from '@/constants/config'
 
 export function useTeamData() {
-  const { data: rawData, loading, error } = useCsvData<any>(CSV_PATHS.MATCHES)
+  const { data: rawData, loading, error, lastModified } = useCsvData<any>(CSV_PATHS.MATCHES)
 
   const teams: Team[] = useMemo(() => {
     // Group matches by team_id
@@ -72,5 +72,5 @@ export function useTeamData() {
     return teamsArray
   }, [rawData])
 
-  return { teams, loading, error }
+  return { teams, loading, error, lastModified }
 }
