@@ -37,24 +37,15 @@ jobs:
           ls -lh backend/*.csv
           echo "CSV files are available"
 
-      - name: Run debug test to check page content
-        run: npx playwright test e2e/debug.spec.ts --project=chromium --reporter=list
-        env:
-          DEBUG: pw:webserver
+      - name: Run E2E tests (core functionality)
+        run: npx playwright test e2e/navigation.spec.ts e2e/home.spec.ts e2e/classement.spec.ts e2e/timestamp.spec.ts --project=chromium --reporter=list
 
-      - name: Check if CSV files were copied to public directory
-        run: |
-          echo "Checking public/backend directory..."
-          ls -lh public/backend/ || echo "public/backend directory does not exist"
-
-      - name: Upload debug artifacts
+      - name: Upload test results
         uses: actions/upload-artifact@v4
-        if: always()
+        if: failure()
         with:
-          name: debug-artifacts
-          path: |
-            debug-screenshot.png
-            playwright-report/
+          name: playwright-report
+          path: playwright-report/
           retention-days: 7
 
       - name: Build
