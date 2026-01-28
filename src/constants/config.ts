@@ -1,4 +1,6 @@
-const BASE_PATH = '/usftt/backend'  // Always use base path (set in vite.config.ts)
+// Use the correct base path for CSV files based on Vite's base configuration
+// In production: /usftt/backend, In dev/test: /backend
+const BASE_PATH = import.meta.env.BASE_URL === '/' ? '/backend' : '/usftt/backend'
 
 export const CSV_PATHS = {
   LICENSES: `${BASE_PATH}/licenses_08940073.csv`,
