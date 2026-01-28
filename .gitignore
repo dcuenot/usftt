@@ -13,3 +13,6 @@ tsconfig.tsbuildinfo
 
 # CSV files in public are copies from backend/ (for dev server)
 public/backend/*.csv
+# Playwright test results
+playwright-report/
+test-results/
