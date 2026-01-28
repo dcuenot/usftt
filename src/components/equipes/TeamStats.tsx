@@ -9,11 +9,35 @@ interface TeamStatsProps {
 export function TeamStats({ team }: TeamStatsProps) {
   // Calculate stats from matches
   const matches = Object.values(team.matches)
-  const playedMatches = matches.filter(m => m.adversaire && m.score_us !== undefined)
 
-  const victories = playedMatches.filter(m => (m.score_us || 0) > (m.score_adv || 0)).length
-  const defeats = playedMatches.filter(m => (m.score_us || 0) < (m.score_adv || 0)).length
-  const draws = playedMatches.filter(m => (m.score_us || 0) === (m.score_adv || 0)).length
+  // Filter played matches (both scores are not empty)
+  const playedMatches = matches.filter(m => {
+    const homeScore = String(m.score_domicile || '').trim()
+    const awayScore = String(m.score_exterieur || '').trim()
+    return homeScore !== '' && awayScore !== ''
+  })
+
+  // Calculate victories, defeats, draws
+  const victories = playedMatches.filter(m => {
+    const isHome = m.is_home === 'True'
+    const ourScore = parseInt(isHome ? m.score_domicile : m.score_exterieur) || 0
+    const theirScore = parseInt(isHome ? m.score_exterieur : m.score_domicile) || 0
+    return ourScore > theirScore
+  }).length
+
+  const defeats = playedMatches.filter(m => {
+    const isHome = m.is_home === 'True'
+    const ourScore = parseInt(isHome ? m.score_domicile : m.score_exterieur) || 0
+    const theirScore = parseInt(isHome ? m.score_exterieur : m.score_domicile) || 0
+    return ourScore < theirScore
+  }).length
+
+  const draws = playedMatches.filter(m => {
+    const isHome = m.is_home === 'True'
+    const ourScore = parseInt(isHome ? m.score_domicile : m.score_exterieur) || 0
+    const theirScore = parseInt(isHome ? m.score_exterieur : m.score_domicile) || 0
+    return ourScore === theirScore
+  }).length
 
   const winPercentage = playedMatches.length > 0
     ? Math.round((victories / playedMatches.length) * 100)

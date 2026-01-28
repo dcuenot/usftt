@@ -22,7 +22,12 @@ export function MatchResultList({ matches, tourNumbers }: MatchResultListProps) 
       {tourNumbers.map((tour) => {
         const match = matches.find(m => m.tour === tour)
 
-        if (!match || !match.adversaire) {
+        // Check if match exists and has scores
+        const homeScore = String(match?.score_domicile || '').trim()
+        const awayScore = String(match?.score_exterieur || '').trim()
+        const hasScores = homeScore !== '' && awayScore !== ''
+
+        if (!match || !hasScores) {
           return (
             <div
               key={tour}
@@ -34,9 +39,10 @@ export function MatchResultList({ matches, tourNumbers }: MatchResultListProps) 
           )
         }
 
-        const ourScore = match.score_us || 0
-        const theirScore = match.score_adv || 0
         const isHome = match.is_home === 'True'
+        const ourScore = parseInt(isHome ? match.score_domicile : match.score_exterieur) || 0
+        const theirScore = parseInt(isHome ? match.score_exterieur : match.score_domicile) || 0
+        const opponent = isHome ? match.equipe_exterieur : match.equipe_domicile
 
         let resultClass = 'border-gray-300 bg-white'
         let resultBadgeClass = 'bg-gray-100 text-gray-700'
@@ -68,7 +74,7 @@ export function MatchResultList({ matches, tourNumbers }: MatchResultListProps) 
 
             {/* Opponent Name */}
             <h4 className="text-lg font-semibold text-gray-900 mb-2">
-              {match.adversaire}
+              {opponent}
             </h4>
 
             {/* Score */}

@@ -3,12 +3,13 @@ import react from '@vitejs/plugin-react'
 import path from 'path'
 
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   plugins: [react()],
-  base: '/usftt/',  // GitHub Pages base path
+  // Only use /usftt/ base path in production builds, not in dev/test
+  base: mode === 'production' ? '/usftt/' : '/',
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
   },
-})
+}))

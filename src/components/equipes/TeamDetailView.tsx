@@ -13,13 +13,15 @@ interface TeamDetailViewProps {
   onBack: () => void
 }
 
-// Helper to get division color
-function getDivisionColor(division: string): string {
-  const div = division.toUpperCase()
-  if (div.includes('N1') || div.includes('NAT')) return 'bg-yellow-100 text-yellow-800 border-yellow-300'
-  if (div.includes('R1') || div.includes('REG')) return 'bg-gray-200 text-gray-800 border-gray-400'
-  if (div.includes('D1') || div.includes('DEP')) return 'bg-orange-100 text-orange-800 border-orange-300'
-  return 'bg-blue-100 text-blue-800 border-blue-300'
+// Helper to get division color based on gender
+function getDivisionColor(gender: string): string {
+  if (gender === 'G') {
+    // Blue for men
+    return 'bg-blue-100 text-blue-800 border-blue-300'
+  } else {
+    // Pink for women
+    return 'bg-pink-100 text-pink-800 border-pink-300'
+  }
 }
 
 export function TeamDetailView({
@@ -35,11 +37,8 @@ export function TeamDetailView({
     label: `Tour ${tour}`,
   }))
 
-  // Get matches for the selected tour
-  const selectedMatches = tours
-    .filter(tour => tour === selectedTour)
-    .map(tour => team.matches[tour])
-    .filter(Boolean)
+  // Get all matches as an array
+  const allMatches = Object.values(team.matches)
 
   return (
     <div className="space-y-6" data-testid="team-detail-view">
@@ -56,7 +55,7 @@ export function TeamDetailView({
       <div className="bg-white rounded-card shadow-card p-6">
         <div className="flex items-start justify-between mb-2">
           <h2 className="text-2xl font-bold text-gray-900">{team.name}</h2>
-          <span className={cn('text-sm font-medium px-3 py-1 rounded border', getDivisionColor(team.division))}>
+          <span className={cn('text-sm font-medium px-3 py-1 rounded border', getDivisionColor(team.gender))}>
             {team.division}
           </span>
         </div>
@@ -78,7 +77,7 @@ export function TeamDetailView({
 
         {/* Match Results for Selected Tour */}
         <div className="p-6">
-          <MatchResultList matches={selectedMatches} tourNumbers={[selectedTour]} />
+          <MatchResultList matches={allMatches} tourNumbers={[selectedTour]} />
         </div>
       </div>
     </div>

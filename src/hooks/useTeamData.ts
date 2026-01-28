@@ -3,6 +3,14 @@ import { useCsvData } from './useCsvData'
 import { Match, Team } from '@/types/team.types'
 import { CSV_PATHS } from '@/constants/config'
 
+// Helper to normalize team names
+function normalizeTeamName(name: string): string {
+  return name
+    .replace('FONTENAY USTT', 'Equipe')
+    .replace('FONTENAYSIENNE US TT', 'Equipe')
+    .replace('US FONTENAY TT', 'Equipe')
+}
+
 export function useTeamData() {
   const { data: rawData, loading, error, lastModified } = useCsvData<any>(CSV_PATHS.MATCHES)
 
@@ -12,16 +20,16 @@ export function useTeamData() {
 
     rawData.forEach((row) => {
       const match: Match = {
-        team_id: row.team_id || '',
-        team_name: row.team_name || '',
-        division: row.division || '',
-        tour: row.tour || '',
-        date: row.date || '',
-        equipe_domicile: row.equipe_domicile || '',
-        equipe_exterieur: row.equipe_exterieur || '',
-        score_domicile: row.score_domicile || '',
-        score_exterieur: row.score_exterieur || '',
-        is_home: row.is_home || 'True',
+        team_id: String(row.team_id || ''),
+        team_name: String(row.team_name || ''),
+        division: String(row.division || ''),
+        tour: String(row.tour || ''),
+        date: String(row.date || ''),
+        equipe_domicile: String(row.equipe_domicile || ''),
+        equipe_exterieur: String(row.equipe_exterieur || ''),
+        score_domicile: String(row.score_domicile || ''),
+        score_exterieur: String(row.score_exterieur || ''),
+        is_home: (String(row.is_home || 'True') === 'True' ? 'True' : 'False') as 'True' | 'False',
       }
 
       if (!teamMap.has(match.team_id)) {
@@ -49,7 +57,7 @@ export function useTeamData() {
 
       teamsArray.push({
         id: teamId,
-        name: firstMatch.team_name,
+        name: normalizeTeamName(firstMatch.team_name),
         division: firstMatch.division,
         gender,
         matches: matchesByTour,
