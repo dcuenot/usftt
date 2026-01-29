@@ -29,3 +29,6 @@ Thumbs.db
 
 # Generated data files
 *.csv
+
+# Environment variables (sensitive credentials)
+.env
