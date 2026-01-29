@@ -123,6 +123,13 @@ class TestExtractTeamId:
         assert extract_team_id(libequipe, "R2 Dames") == "5F"
         assert extract_team_id(libequipe, "FED_Nationale 1 Dames") == "5F"
 
+    def test_extract_team_feminine_keyword(self):
+        """Test extraction with 'Feminine' keyword in division name."""
+        libequipe = "US Fontenay TT 4 - Phase 1"
+        assert extract_team_id(libequipe, "PR Feminine") == "4F"
+        assert extract_team_id(libequipe, "D1 Feminine") == "4F"
+        assert extract_team_id(libequipe, "R2 Feminine") == "4F"
+
     def test_no_team_number_in_name(self):
         """Test when no team number is found in the name (before Phase)."""
         libequipe = "US FONTENAY TT - Phase 1"

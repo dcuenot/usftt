@@ -47,7 +47,7 @@ def extract_team_id(libequipe, libdivision):
     team_number = next((char for char in libequipe.split() if char.isdigit()), None)
 
     # Determine gender marker based on division
-    gender_marker = 'F' if 'Dames' in libdivision else 'G'
+    gender_marker = 'F' if ('Dames' in libdivision or 'Feminine' in libdivision) else 'G'
 
     # Combine into ID
     return f"{team_number}{gender_marker}" if team_number else None
@@ -194,13 +194,16 @@ def main():
                     'is_home': match['is_home']
                 })
 
+        # Create data directory if it doesn't exist
+        os.makedirs('data', exist_ok=True)
+
         # Write to CSV
-        csv_filename = 'rencontres_'+club_number+'.csv'
+        csv_filename = os.path.join('data', f'rencontres_{club_number}.csv')
         fieldnames = ['team_id', 'team_name', 'division', 'poule', 'rang', 'points',
                      'joues', 'victoires', 'nuls', 'defaites', 'forfaits',
                      'tour', 'date', 'equipe_domicile', 'equipe_exterieur',
                      'score_domicile', 'score_exterieur', 'is_home']
-        
+
         with open(csv_filename, 'w', newline='', encoding='utf-8') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
             writer.writeheader()

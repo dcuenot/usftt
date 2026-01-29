@@ -65,13 +65,16 @@ def save_competitors_to_csv(competitors, club_number):
     """Save competitors data to a CSV file."""
     if not competitors:
         return
-    
-    filename = f"competitors_{club_number}.csv"
+
+    # Create data directory if it doesn't exist
+    os.makedirs('data', exist_ok=True)
+
+    filename = os.path.join('data', f"competitors_{club_number}.csv")
     fieldnames = [
         'idlicence', 'licence', 'sexe', 'cat', 'prenom', 'nom', 'point',
          'parties', get_month(-1), get_month(-2)
     ]
-    
+
     count = save_to_csv(competitors, filename, fieldnames)
     print(f"📝 {count} competitors saved to {filename}")
 
@@ -79,11 +82,14 @@ def save_licenses_to_csv(licenses, club_number):
     """Save licenses data to a CSV file."""
     if not licenses:
         return
-    
+
     # Work on a deep clone so we don't mutate the original licenses list
     licenses_clone = copy.deepcopy(licenses)
 
-    filename = f"licenses_{club_number}.csv"
+    # Create data directory if it doesn't exist
+    os.makedirs('data', exist_ok=True)
+
+    filename = os.path.join('data', f"licenses_{club_number}.csv")
     fieldnames = [
         'idlicence', 'licence', 'sexe', 'cat', 'prenom', 'nom', 'certif',
          'type', 'validation', 'mutation', 'arb', 'ja', 'tech'
