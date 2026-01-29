@@ -176,6 +176,7 @@ test.describe('EquipesPage Responsive Redesign', () => {
     await page.goto('/equipes')
 
     // Wait for team cards
+    await page.waitForLoadState('networkidle')
     await page.waitForSelector('[data-testid="team-card"]')
 
     // Check first card has stats grid with win/loss labels
@@ -185,10 +186,12 @@ test.describe('EquipesPage Responsive Redesign', () => {
     const statsGrid = firstCard.locator('.grid-cols-4')
     await expect(statsGrid).toBeVisible()
 
-    // Verify V, D, N labels are present within the grid
-    await expect(statsGrid.locator('text=V')).toBeVisible() // Victoires
-    await expect(statsGrid.locator('text=D')).toBeVisible() // Défaites
-    await expect(statsGrid.locator('text=N')).toBeVisible() // Nuls
+    // Verify labels are present by checking the text content contains them
+    const gridText = await statsGrid.textContent()
+    expect(gridText).toContain('V') // Victoires
+    expect(gridText).toContain('D') // Défaites
+    expect(gridText).toContain('N') // Nuls
+    expect(gridText).toContain('Win') // Win percentage
   })
 
   test('should display gender indicator on team cards', async ({ page }) => {

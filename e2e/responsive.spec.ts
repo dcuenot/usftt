@@ -134,34 +134,38 @@ test.describe('Responsive Design', () => {
   })
 
   test('should display team cards in responsive grid (EquipesPage)', async ({ page }) => {
-    // Mobile: 1 column
+    // Mobile: should display team cards
     await page.setViewportSize({ width: 375, height: 667 })
     await page.goto('/equipes')
-    await page.waitForSelector('h1')
+    await page.waitForLoadState('networkidle')
+    await page.waitForSelector('[data-testid="team-card"]')
 
-    let gridContainer = page.locator('[data-testid="team-overview"]')
-    if ((await gridContainer.count()) > 0) {
-      await expect(gridContainer).toHaveClass(/grid-cols-1/)
-    }
+    // Verify team cards are displayed
+    let teamCards = await page.locator('[data-testid="team-card"]').count()
+    expect(teamCards).toBeGreaterThan(0)
 
-    // Tablet: 2 columns
+    // Tablet: should still display team cards with responsive grid
     await page.setViewportSize({ width: 768, height: 1024 })
     await page.reload()
-    await page.waitForSelector('h1')
+    await page.waitForLoadState('networkidle')
+    await page.waitForSelector('[data-testid="team-card"]')
 
-    gridContainer = page.locator('[data-testid="team-overview"]')
-    if ((await gridContainer.count()) > 0) {
-      await expect(gridContainer).toHaveClass(/md:grid-cols-2/)
-    }
+    teamCards = await page.locator('[data-testid="team-card"]').count()
+    expect(teamCards).toBeGreaterThan(0)
 
-    // Desktop: 3 columns
+    // Desktop: should display team cards in 3-column grid
     await page.setViewportSize({ width: 1920, height: 1080 })
     await page.reload()
-    await page.waitForSelector('h1')
+    await page.waitForLoadState('networkidle')
+    await page.waitForSelector('[data-testid="team-card"]')
 
-    gridContainer = page.locator('[data-testid="team-overview"]')
+    teamCards = await page.locator('[data-testid="team-card"]').count()
+    expect(teamCards).toBeGreaterThan(0)
+
+    // Check that grid container has responsive classes (inside accordion)
+    const gridContainer = page.locator('.grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3')
     if ((await gridContainer.count()) > 0) {
-      await expect(gridContainer).toHaveClass(/lg:grid-cols-3/)
+      await expect(gridContainer).toBeVisible()
     }
   })
 

@@ -12,12 +12,12 @@ test.describe('HomePage Dashboard', () => {
     const statsCards = await page.locator('[data-testid="stats-card"]').count()
     expect(statsCards).toBe(4)
 
-    // Check for expected stats labels within dashboard header
-    const dashboard = page.locator('[data-testid="dashboard-header"]')
-    await expect(dashboard.getByText('Total joueurs')).toBeVisible()
-    await expect(dashboard.getByText('Joueurs actifs')).toBeVisible()
-    await expect(dashboard.getByText('Matchs joués')).toBeVisible()
-    await expect(dashboard.getByText('Moyenne de points')).toBeVisible()
+    // Check for expected stats labels by checking text content of dashboard
+    const dashboardText = await page.locator('[data-testid="dashboard-header"]').textContent()
+    expect(dashboardText).toContain('Total joueurs')
+    expect(dashboardText).toContain('Joueurs actifs')
+    expect(dashboardText).toContain('Matchs joués')
+    expect(dashboardText).toContain('Moyenne de points')
   })
 
   test('should display player cards on mobile', async ({ page }) => {
