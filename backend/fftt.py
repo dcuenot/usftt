@@ -141,9 +141,14 @@ class FFTTApiClient:
     def rencontre_equipes(self, poule: str):
         return self._get_dict("xml_rencontre_equ", poule=poule)
 
-    def classement_poule(self, poule: str):
-        """Récupère le classement d'une poule."""
-        return self._get_dict("xml_result_equ", auto=poule)
+    def classement_poule(self, poule: str, division: str):
+        """Récupère le classement d'une poule.
+
+        Args:
+            poule: ID de la poule (cx_poule)
+            division: ID de la division (D1)
+        """
+        return self._get_dict("xml_result_equ", action="classement", auto="1", D1=division, cx_poule=poule)
 
 
 # ============================================================

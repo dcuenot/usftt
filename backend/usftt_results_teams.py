@@ -52,11 +52,11 @@ def extract_team_id(libequipe, libdivision):
     # Combine into ID
     return f"{team_number}{gender_marker}" if team_number else None
 
-def get_team_ranking(client, poule_number, team_name):
+def get_team_ranking(client, poule_number, division_id, team_name):
     """Get team ranking information from the poule."""
     try:
-        classement_data = client.classement_poule(poule_number)
-        equipes = classement_data.get('resultat', {}).get('liste', {}).get('equipe', [])
+        classement_data = client.classement_poule(poule_number, division_id)
+        equipes = classement_data.get('liste', {}).get('classement', [])
 
         # Ensure equipes is a list
         if not isinstance(equipes, list):
@@ -64,15 +64,15 @@ def get_team_ranking(client, poule_number, team_name):
 
         # Find the team in the ranking
         for equipe in equipes:
-            if equipe.get('libequipe') == team_name:
+            if equipe.get('equipe') == team_name:
                 return {
-                    'rang': equipe.get('rang', 'N/A'),
+                    'rang': equipe.get('clt', 'N/A'),
                     'points': equipe.get('pts', 'N/A'),
-                    'joues': equipe.get('J', '0'),
-                    'victoires': equipe.get('V', '0'),
-                    'nuls': equipe.get('N', '0'),
-                    'defaites': equipe.get('D', '0'),
-                    'forfaits': equipe.get('F', '0')
+                    'joues': equipe.get('joue', '0'),
+                    'victoires': equipe.get('vic', '0'),
+                    'nuls': equipe.get('nul', '0'),
+                    'defaites': equipe.get('def', '0'),
+                    'forfaits': equipe.get('pf', '0')
                 }
 
         # Team not found in ranking
@@ -123,13 +123,15 @@ def main():
         
         output = []
         for team in filtered_teams:
-            # Extract poule number from liendivision
+            # Extract poule number and division ID from liendivision
             poule_link = team.get('liendivision', '')
             poule_number = poule_link.split('cx_poule=')[1].split('&')[0] if 'cx_poule=' in poule_link else 'N/A'
+            division_id = poule_link.split('D1=')[1].split('&')[0] if 'D1=' in poule_link else 'N/A'
 
-            # Get team ranking
+            # Get team ranking (strip phase suffix for API lookup)
             team_name = team.get('libequipe', 'N/A')
-            ranking = get_team_ranking(client, poule_number, team_name)
+            team_name_for_lookup = team_name.split(' - Phase')[0]  # Remove " - Phase X" suffix
+            ranking = get_team_ranking(client, poule_number, division_id, team_name_for_lookup)
 
             output.append({
                 "id": extract_team_id(team_name, team.get('libdivision', '')),

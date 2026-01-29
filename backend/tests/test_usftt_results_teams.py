@@ -163,23 +163,21 @@ class TestGetTeamRanking:
         """Test getting ranking for a single team in the list."""
         mock_client = Mock()
         mock_client.classement_poule.return_value = {
-            'resultat': {
-                'liste': {
-                    'equipe': {
-                        'libequipe': 'FONTENAY USTT 1',
-                        'rang': '1',
-                        'pts': '15',
-                        'J': '5',
-                        'V': '5',
-                        'N': '0',
-                        'D': '0',
-                        'F': '0'
-                    }
+            'liste': {
+                'classement': {
+                    'equipe': 'FONTENAY USTT 1',
+                    'clt': '1',
+                    'pts': '15',
+                    'joue': '5',
+                    'vic': '5',
+                    'nul': '0',
+                    'def': '0',
+                    'pf': '0'
                 }
             }
         }
 
-        result = get_team_ranking(mock_client, '12345', 'FONTENAY USTT 1')
+        result = get_team_ranking(mock_client, '12345', '199109', 'FONTENAY USTT 1')
 
         assert result['rang'] == '1'
         assert result['points'] == '15'
@@ -193,45 +191,43 @@ class TestGetTeamRanking:
         """Test getting ranking when multiple teams are in the list."""
         mock_client = Mock()
         mock_client.classement_poule.return_value = {
-            'resultat': {
-                'liste': {
-                    'equipe': [
-                        {
-                            'libequipe': 'TEAM A',
-                            'rang': '1',
-                            'pts': '20',
-                            'J': '6',
-                            'V': '6',
-                            'N': '0',
-                            'D': '0',
-                            'F': '0'
-                        },
-                        {
-                            'libequipe': 'FONTENAY USTT 2',
-                            'rang': '3',
-                            'pts': '10',
-                            'J': '6',
-                            'V': '3',
-                            'N': '1',
-                            'D': '2',
-                            'F': '0'
-                        },
-                        {
-                            'libequipe': 'TEAM C',
-                            'rang': '5',
-                            'pts': '5',
-                            'J': '6',
-                            'V': '1',
-                            'N': '0',
-                            'D': '5',
-                            'F': '0'
-                        }
-                    ]
-                }
+            'liste': {
+                'classement': [
+                    {
+                        'equipe': 'TEAM A',
+                        'clt': '1',
+                        'pts': '20',
+                        'joue': '6',
+                        'vic': '6',
+                        'nul': '0',
+                        'def': '0',
+                        'pf': '0'
+                    },
+                    {
+                        'equipe': 'FONTENAY USTT 2',
+                        'clt': '3',
+                        'pts': '10',
+                        'joue': '6',
+                        'vic': '3',
+                        'nul': '1',
+                        'def': '2',
+                        'pf': '0'
+                    },
+                    {
+                        'equipe': 'TEAM C',
+                        'clt': '5',
+                        'pts': '5',
+                        'joue': '6',
+                        'vic': '1',
+                        'nul': '0',
+                        'def': '5',
+                        'pf': '0'
+                    }
+                ]
             }
         }
 
-        result = get_team_ranking(mock_client, '12345', 'FONTENAY USTT 2')
+        result = get_team_ranking(mock_client, '12345', '199109', 'FONTENAY USTT 2')
 
         assert result['rang'] == '3'
         assert result['points'] == '10'
@@ -244,25 +240,23 @@ class TestGetTeamRanking:
         """Test when the team is not found in the ranking."""
         mock_client = Mock()
         mock_client.classement_poule.return_value = {
-            'resultat': {
-                'liste': {
-                    'equipe': [
-                        {
-                            'libequipe': 'TEAM A',
-                            'rang': '1',
-                            'pts': '20',
-                            'J': '6',
-                            'V': '6',
-                            'N': '0',
-                            'D': '0',
-                            'F': '0'
-                        }
-                    ]
-                }
+            'liste': {
+                'classement': [
+                    {
+                        'equipe': 'TEAM A',
+                        'clt': '1',
+                        'pts': '20',
+                        'joue': '6',
+                        'vic': '6',
+                        'nul': '0',
+                        'def': '0',
+                        'pf': '0'
+                    }
+                ]
             }
         }
 
-        result = get_team_ranking(mock_client, '12345', 'NONEXISTENT TEAM')
+        result = get_team_ranking(mock_client, '12345', '199109', 'NONEXISTENT TEAM')
 
         assert result['rang'] == 'N/A'
         assert result['points'] == 'N/A'
@@ -274,7 +268,7 @@ class TestGetTeamRanking:
         mock_client = Mock()
         mock_client.classement_poule.side_effect = Exception("API Error")
 
-        result = get_team_ranking(mock_client, '12345', 'FONTENAY USTT 1')
+        result = get_team_ranking(mock_client, '12345', '199109', 'FONTENAY USTT 1')
 
         assert result['rang'] == 'N/A'
         assert result['points'] == 'N/A'
@@ -284,19 +278,17 @@ class TestGetTeamRanking:
         """Test when some ranking fields are missing."""
         mock_client = Mock()
         mock_client.classement_poule.return_value = {
-            'resultat': {
-                'liste': {
-                    'equipe': {
-                        'libequipe': 'FONTENAY USTT 1',
-                        'rang': '2',
-                        'pts': '12'
-                        # Missing J, V, N, D, F fields
-                    }
+            'liste': {
+                'classement': {
+                    'equipe': 'FONTENAY USTT 1',
+                    'clt': '2',
+                    'pts': '12'
+                    # Missing joue, vic, nul, def, pf fields
                 }
             }
         }
 
-        result = get_team_ranking(mock_client, '12345', 'FONTENAY USTT 1')
+        result = get_team_ranking(mock_client, '12345', '199109', 'FONTENAY USTT 1')
 
         assert result['rang'] == '2'
         assert result['points'] == '12'
@@ -311,7 +303,7 @@ class TestGetTeamRanking:
         mock_client = Mock()
         mock_client.classement_poule.return_value = {}
 
-        result = get_team_ranking(mock_client, '12345', 'FONTENAY USTT 1')
+        result = get_team_ranking(mock_client, '12345', '199109', 'FONTENAY USTT 1')
 
         assert result['rang'] == 'N/A'
         assert result['points'] == 'N/A'
