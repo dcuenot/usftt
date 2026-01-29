@@ -139,11 +139,6 @@ export function EquipesPage() {
         </button>
       </div>
 
-      {/* Teams count */}
-      <div className="text-sm text-gray-600">
-        {filteredTeams.length} équipe{filteredTeams.length > 1 ? 's' : ''}
-      </div>
-
       {/* Dense Teams View */}
       <DenseTeamsView
         teams={filteredTeams}
