@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copy CSV files from backend/ to public/backend/ for development
-mkdir -p public/backend
-cp backend/*.csv public/backend/
-echo "✅ CSV files copied to public/backend/"
+# Copy CSV files from backend/ to frontend/public/backend/ for development
+mkdir -p frontend/public/backend
+cp backend/*.csv frontend/public/backend/
+echo "✅ CSV files copied to frontend/public/backend/"
