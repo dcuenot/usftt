@@ -6,7 +6,6 @@ import { ChevronUp, ChevronDown, ChevronsUpDown, Home, Plane } from 'lucide-reac
 interface DenseTeamTableProps {
   teams: Team[]
   tours: string[]
-  onSelectTeam: (teamId: string) => void
 }
 
 type SortField = 'name' | 'division' | 'rang' | 'points'
@@ -25,7 +24,8 @@ function getDivisionColor(gender: string): string {
 function getMatchResult(team: Team, tour: string): { icon: string | ReactNode; color: string; score: string } {
   const match = team.matches[tour]
 
-  if (!match || !match.score_domicile || !match.score_exterieur) {
+  // If no match data or both scores are empty, match not played yet
+  if (!match || (!match.score_domicile && !match.score_exterieur)) {
     // Match not yet played - show home/away indicator
     const isHome = match?.is_home === 'True'
     return {
@@ -35,9 +35,10 @@ function getMatchResult(team: Team, tour: string): { icon: string | ReactNode; c
     }
   }
 
+  // If at least one score exists, match was played (treat empty as 0 for forfeits)
   const isHome = match.is_home === 'True'
-  const ourScore = parseInt(isHome ? match.score_domicile : match.score_exterieur) || 0
-  const theirScore = parseInt(isHome ? match.score_exterieur : match.score_domicile) || 0
+  const ourScore = parseInt(isHome ? (match.score_domicile || '0') : (match.score_exterieur || '0')) || 0
+  const theirScore = parseInt(isHome ? (match.score_exterieur || '0') : (match.score_domicile || '0')) || 0
 
   if (ourScore > theirScore) {
     return { icon: '✓', color: 'text-victory', score: `${ourScore}-${theirScore}` }
@@ -70,7 +71,7 @@ function getOpponentName(team: Team, tour: string): { full: string; short: strin
   }
 }
 
-export function DenseTeamTable({ teams, tours, onSelectTeam }: DenseTeamTableProps) {
+export function DenseTeamTable({ teams, tours }: DenseTeamTableProps) {
   const [sortField, setSortField] = useState<SortField>('name')
   const [sortDirection, setSortDirection] = useState<SortDirection>(null)
 
@@ -186,8 +187,7 @@ export function DenseTeamTable({ teams, tours, onSelectTeam }: DenseTeamTablePro
           {sortedTeams.map((team) => (
             <tr
               key={team.id}
-              className="hover:bg-gray-50 cursor-pointer transition-colors"
-              onClick={() => onSelectTeam(team.id)}
+              className="hover:bg-gray-50 transition-colors"
             >
               {/* Team Name */}
               <td className="sticky left-0 z-10 bg-white px-3 py-3 whitespace-nowrap group-hover:bg-gray-50">

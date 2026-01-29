@@ -6,7 +6,6 @@ import { Home, Plane } from 'lucide-react'
 interface CompactTeamCardProps {
   team: Team
   tours: string[]
-  onSelectTeam: (teamId: string) => void
 }
 
 // Helper to get division color based on gender
@@ -22,7 +21,8 @@ function getDivisionColor(gender: string): string {
 function getMatchResult(team: Team, tour: string): { icon: string | ReactNode; color: string; bgColor: string; score: string } {
   const match = team.matches[tour]
 
-  if (!match || !match.score_domicile || !match.score_exterieur) {
+  // If no match data or both scores are empty, match not played yet
+  if (!match || (!match.score_domicile && !match.score_exterieur)) {
     // Match not yet played - show home/away indicator
     const isHome = match?.is_home === 'True'
     return {
@@ -33,9 +33,10 @@ function getMatchResult(team: Team, tour: string): { icon: string | ReactNode; c
     }
   }
 
+  // If at least one score exists, match was played (treat empty as 0 for forfeits)
   const isHome = match.is_home === 'True'
-  const ourScore = parseInt(isHome ? match.score_domicile : match.score_exterieur) || 0
-  const theirScore = parseInt(isHome ? match.score_exterieur : match.score_domicile) || 0
+  const ourScore = parseInt(isHome ? (match.score_domicile || '0') : (match.score_exterieur || '0')) || 0
+  const theirScore = parseInt(isHome ? (match.score_exterieur || '0') : (match.score_domicile || '0')) || 0
 
   if (ourScore > theirScore) {
     return { icon: '✓', color: 'text-victory', bgColor: 'bg-victory-light', score: `${ourScore}-${theirScore}` }
@@ -46,11 +47,10 @@ function getMatchResult(team: Team, tour: string): { icon: string | ReactNode; c
   }
 }
 
-export function CompactTeamCard({ team, tours, onSelectTeam }: CompactTeamCardProps) {
+export function CompactTeamCard({ team, tours }: CompactTeamCardProps) {
   return (
     <div
-      className="bg-white rounded-card shadow-card hover:shadow-card-hover transition-all cursor-pointer overflow-hidden"
-      onClick={() => onSelectTeam(team.id)}
+      className="bg-white rounded-card shadow-card hover:shadow-card-hover transition-all overflow-hidden"
       data-testid="compact-team-card"
     >
       {/* Header */}

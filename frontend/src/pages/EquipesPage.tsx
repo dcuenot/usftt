@@ -2,14 +2,11 @@ import { useMemo, useState } from 'react'
 import { useTeamData } from '@/hooks/useTeamData'
 import { LastUpdate } from '@/components/shared/LastUpdate'
 import { DenseTeamsView } from '@/components/equipes/DenseTeamsView'
-import { TeamDetailView } from '@/components/equipes/TeamDetailView'
 import { SkeletonCard } from '@/components/ui/SkeletonCard'
 
 export function EquipesPage() {
   const { teams, loading, error, lastModified } = useTeamData()
   const [genderFilter, setGenderFilter] = useState<'all' | 'G' | 'F'>('all')
-  const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null)
-  const [selectedTour, setSelectedTour] = useState<string>('1')
 
   // Filter teams by gender
   const filteredTeams = useMemo(() => {
@@ -30,18 +27,6 @@ export function EquipesPage() {
       .sort((a, b) => a - b)
       .map((t) => t.toString())
   }, [teams])
-
-  // Get selected team
-  const selectedTeam = useMemo(() => {
-    if (!selectedTeamId) return null
-    return teams.find(team => team.id === selectedTeamId) || null
-  }, [selectedTeamId, teams])
-
-  // Handle back to overview
-  const handleBack = () => {
-    setSelectedTeamId(null)
-    setSelectedTour('1') // Reset to first tour
-  }
 
   if (loading) {
     return (
@@ -74,29 +59,6 @@ export function EquipesPage() {
     )
   }
 
-  // Show detail view if team is selected
-  if (selectedTeam) {
-    return (
-      <div className="space-y-6">
-        {/* Page Header */}
-        <div className="flex items-center justify-between">
-          <h1 className="mb-0">Résultats par équipes</h1>
-          <LastUpdate lastModified={lastModified} loading={loading} variant="relative" />
-        </div>
-
-        {/* Team Detail View */}
-        <TeamDetailView
-          team={selectedTeam}
-          tours={tours}
-          selectedTour={selectedTour}
-          onTourChange={setSelectedTour}
-          onBack={handleBack}
-        />
-      </div>
-    )
-  }
-
-  // Show overview (default)
   return (
     <div className="space-y-6">
       {/* Page Header */}
@@ -143,7 +105,6 @@ export function EquipesPage() {
       <DenseTeamsView
         teams={filteredTeams}
         tours={tours}
-        onSelectTeam={setSelectedTeamId}
       />
     </div>
   )

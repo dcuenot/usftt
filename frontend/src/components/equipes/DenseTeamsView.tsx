@@ -10,7 +10,6 @@ import { useMediaQuery } from '@/hooks/useMediaQuery'
 interface DenseTeamsViewProps {
   teams: Team[]
   tours: string[]
-  onSelectTeam: (teamId: string) => void
 }
 
 // Helper to determine division level
@@ -28,7 +27,7 @@ function getDivisionLevel(division: string): 'Nationale' | 'Régionale' | 'Dépa
   return 'Autre'
 }
 
-export function DenseTeamsView({ teams, tours, onSelectTeam }: DenseTeamsViewProps) {
+export function DenseTeamsView({ teams, tours }: DenseTeamsViewProps) {
   const isDesktop = useMediaQuery('(min-width: 768px)')
 
   // Group teams by phase and division level
@@ -124,7 +123,6 @@ export function DenseTeamsView({ teams, tours, onSelectTeam }: DenseTeamsViewPro
                         <DenseTeamTable
                           teams={levelTeams}
                           tours={tours}
-                          onSelectTeam={onSelectTeam}
                         />
                       ) : (
                         /* Mobile: Compact Card View */
@@ -134,7 +132,6 @@ export function DenseTeamsView({ teams, tours, onSelectTeam }: DenseTeamsViewPro
                               key={team.id}
                               team={team}
                               tours={tours}
-                              onSelectTeam={onSelectTeam}
                             />
                           ))}
                         </div>
