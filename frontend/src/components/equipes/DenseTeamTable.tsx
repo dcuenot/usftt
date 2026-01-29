@@ -63,7 +63,7 @@ function getOpponentName(team: Team, tour: string): { full: string; short: strin
   const fullName = opponent.replace(/\s*-\s*Phase\s*\d+/i, '')
 
   // Truncate to 11 characters with ellipsis if needed
-  const shortName = fullName.length > 11 ? `${fullName.substring(0, 11)}..` : fullName
+  const shortName = fullName.length > 14 ? `${fullName.substring(0, 14)}..` : fullName
 
   return {
     full: fullName,
@@ -236,7 +236,7 @@ export function DenseTeamTable({ teams, tours }: DenseTeamTableProps) {
                         </span>
                       </div>
                       <div className="text-xs text-gray-500 truncate max-w-[120px]" title={opponent.full}>
-                        {opponent.short !== '-' ? `vs ${opponent.short}` : '-'}
+                        {opponent.short !== '-' ? `${opponent.short}` : '-'}
                       </div>
                     </div>
                   </td>
