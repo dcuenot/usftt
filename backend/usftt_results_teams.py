@@ -45,12 +45,57 @@ def extract_team_id(libequipe, libdivision):
     """Extract team ID based on team name and division."""
     # Extract team number from libequipe (e.g., "US FONTENAY TT 3 - Phase 1" -> "3")
     team_number = next((char for char in libequipe.split() if char.isdigit()), None)
-    
+
     # Determine gender marker based on division
     gender_marker = 'F' if 'Dames' in libdivision else 'G'
-    
+
     # Combine into ID
     return f"{team_number}{gender_marker}" if team_number else None
+
+def get_team_ranking(client, poule_number, division_id, team_name):
+    """Get team ranking information from the poule."""
+    try:
+        classement_data = client.classement_poule(poule_number, division_id)
+        equipes = classement_data.get('liste', {}).get('classement', [])
+
+        # Ensure equipes is a list
+        if not isinstance(equipes, list):
+            equipes = [equipes]
+
+        # Find the team in the ranking
+        for equipe in equipes:
+            if equipe.get('equipe') == team_name:
+                return {
+                    'rang': equipe.get('clt', 'N/A'),
+                    'points': equipe.get('pts', 'N/A'),
+                    'joues': equipe.get('joue', '0'),
+                    'victoires': equipe.get('vic', '0'),
+                    'nuls': equipe.get('nul', '0'),
+                    'defaites': equipe.get('def', '0'),
+                    'forfaits': equipe.get('pf', '0')
+                }
+
+        # Team not found in ranking
+        return {
+            'rang': 'N/A',
+            'points': 'N/A',
+            'joues': '0',
+            'victoires': '0',
+            'nuls': '0',
+            'defaites': '0',
+            'forfaits': '0'
+        }
+    except Exception as e:
+        print(f"⚠️  Warning: Could not fetch ranking for poule {poule_number}: {e}")
+        return {
+            'rang': 'N/A',
+            'points': 'N/A',
+            'joues': '0',
+            'victoires': '0',
+            'nuls': '0',
+            'defaites': '0',
+            'forfaits': '0'
+        }
 
 def main():
     """Fetch and display USFTT club details and teams."""
@@ -78,14 +123,22 @@ def main():
         
         output = []
         for team in filtered_teams:
-            # Extract poule number from liendivision
+            # Extract poule number and division ID from liendivision
             poule_link = team.get('liendivision', '')
             poule_number = poule_link.split('cx_poule=')[1].split('&')[0] if 'cx_poule=' in poule_link else 'N/A'
-            
+            division_id = poule_link.split('D1=')[1].split('&')[0] if 'D1=' in poule_link else 'N/A'
+
+            # Get team ranking (strip phase suffix for API lookup)
+            team_name = team.get('libequipe', 'N/A')
+            team_name_for_lookup = team_name.split(' - Phase')[0]  # Remove " - Phase X" suffix
+            ranking = get_team_ranking(client, poule_number, division_id, team_name_for_lookup)
+
             output.append({
-                "id": extract_team_id(team.get('libequipe', ''), team.get('libdivision', '')),
-                "equipe": team.get('libequipe', 'N/A'),
+                "id": extract_team_id(team_name, team.get('libdivision', '')),
+                "equipe": team_name,
                 "division": team.get('libdivision', 'N/A'),
+                "poule": poule_number,
+                "ranking": ranking,
                 "rencontres": []
             })
 
@@ -118,11 +171,20 @@ def main():
         # Prepare data for CSV
         csv_data = []
         for team in output:
+            ranking = team['ranking']
             for match in team['rencontres']:
                 csv_data.append({
                     'team_id': team['id'],
                     'team_name': team['equipe'],
                     'division': normalize_division(team['division']),
+                    'poule': team['poule'],
+                    'rang': ranking['rang'],
+                    'points': ranking['points'],
+                    'joues': ranking['joues'],
+                    'victoires': ranking['victoires'],
+                    'nuls': ranking['nuls'],
+                    'defaites': ranking['defaites'],
+                    'forfaits': ranking['forfaits'],
                     'tour': match['tour'],
                     'date': match['date'],
                     'equipe_domicile': match['equipe_domicile'],
@@ -134,9 +196,10 @@ def main():
 
         # Write to CSV
         csv_filename = 'rencontres_'+club_number+'.csv'
-        fieldnames = ['team_id', 'team_name', 'division', 'tour', 'date', 
-                     'equipe_domicile', 'equipe_exterieur', 'score_domicile', 
-                     'score_exterieur', 'is_home']
+        fieldnames = ['team_id', 'team_name', 'division', 'poule', 'rang', 'points',
+                     'joues', 'victoires', 'nuls', 'defaites', 'forfaits',
+                     'tour', 'date', 'equipe_domicile', 'equipe_exterieur',
+                     'score_domicile', 'score_exterieur', 'is_home']
         
         with open(csv_filename, 'w', newline='', encoding='utf-8') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)

@@ -16,3 +16,5 @@ teams = "python teams.py"
 fftt = "python fftt.py"
 
 [dev-packages]
+pytest = "*"
+pytest-cov = "*"
