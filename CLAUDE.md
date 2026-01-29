@@ -110,7 +110,6 @@ nvm use 20
   - `src/constants/` - App constants (CSV paths, routes)
   - `e2e/` - Playwright E2E tests (7 test files covering all features)
   - `public/` - Static assets (images, manifest)
-  - `archive/` - Original HTML files (for reference)
   - `vite.config.ts` - Build configuration (includes `/usftt/` base path for GitHub Pages)
   - `tailwind.config.js` - Tailwind CSS custom theme
   - `tsconfig.json` - TypeScript configuration
