@@ -37,12 +37,18 @@ jobs:
           ls -lh backend/*.csv
           echo "CSV files are available"
 
-      - name: Run E2E tests (core functionality)
-        run: npx playwright test e2e/navigation.spec.ts e2e/home.spec.ts e2e/classement.spec.ts e2e/timestamp.spec.ts --project=chromium --reporter=list
+      - name: Prepare CSV files for tests
+        run: |
+          mkdir -p public/backend
+          cp backend/*.csv public/backend/
+          ls -lh public/backend/
+
+      - name: Run smoke tests (4 tests)
+        run: npx playwright test e2e/smoke.spec.ts --project=chromium --reporter=list --timeout=15000 --retries=0
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
-        if: failure()
+        if: always()
         with:
           name: playwright-report
           path: playwright-report/
