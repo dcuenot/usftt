@@ -386,23 +386,69 @@ page.on('pageerror', error => console.log('PAGE ERROR:', error))
 
 ## CI/CD Integration
 
-Tests run automatically in GitHub Actions pipeline (`.github/workflows/deploy.yml`):
+### Smoke Tests Strategy
+
+**CI/CD runs only smoke tests for fast feedback:**
+
+**File**: `e2e/smoke.spec.ts` (4 tests)
+- Load home page
+- Load classement page
+- Load equipes page
+- Navigate between pages
+
+**Execution time**: ~11 seconds
+**Browser**: Chromium only
+**Timeout**: 15 seconds (fail fast)
+**Retries**: 0
+
+This lean test suite ensures:
+- ✅ Fast CI/CD pipeline
+- ✅ Quick deployment feedback
+- ✅ Core functionality verification
+- ✅ No blocking on flaky tests
+
+### GitHub Actions Configuration
+
+Tests run automatically in `.github/workflows/deploy.yml`:
 
 ```yaml
 - name: Install Playwright Browsers
-  run: npx playwright install --with-deps
+  run: npx playwright install --with-deps chromium
 
-- name: Run E2E tests
-  run: npm run test:e2e
+- name: Prepare CSV files for tests
+  run: |
+    mkdir -p public/backend
+    cp backend/*.csv public/backend/
+
+- name: Run smoke tests
+  run: npx playwright test e2e/smoke.spec.ts --project=chromium --timeout=15000 --retries=0
 
 - name: Upload test results
   uses: actions/upload-artifact@v4
-  if: failure()
+  if: always()
   with:
     name: playwright-report
     path: playwright-report/
-    retention-days: 30
+    retention-days: 7
 ```
+
+### Full Test Suite
+
+Run the full test suite locally before major releases:
+
+```bash
+# Run all 150+ tests across all browsers
+npm run test:e2e
+
+# Takes ~10-15 minutes
+```
+
+### Key Fixes Applied
+
+1. **Dynamic CSV paths** - Uses `/backend` in dev mode, `/usftt/backend` in production
+2. **CSV file preparation** - Explicitly copies CSV files to `public/backend` before tests
+3. **Aggressive timeouts** - 15-second global timeout for fast failure feedback
+4. **Reduced retries** - 0 retries to fail fast instead of hanging
 
 ### Viewing CI Test Results
 
