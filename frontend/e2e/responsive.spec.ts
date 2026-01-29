@@ -133,39 +133,43 @@ test.describe('Responsive Design', () => {
     expect(allHeaders).toBeGreaterThan(5) // Should show many columns
   })
 
-  test('should display team cards in responsive grid (EquipesPage)', async ({ page }) => {
-    // Mobile: should display team cards
+  test('should display team results responsively (EquipesPage)', async ({ page }) => {
+    // Mobile: should display compact team cards
     await page.setViewportSize({ width: 375, height: 667 })
     await page.goto('/equipes')
     await page.waitForLoadState('networkidle')
-    await page.waitForSelector('[data-testid="team-card"]')
+    await page.waitForSelector('[data-testid="dense-teams-view"]')
+    await page.waitForSelector('[data-testid="compact-team-card"]')
 
-    // Verify team cards are displayed
-    let teamCards = await page.locator('[data-testid="team-card"]').count()
-    expect(teamCards).toBeGreaterThan(0)
+    // Verify compact cards are displayed
+    let compactCards = await page.locator('[data-testid="compact-team-card"]').count()
+    expect(compactCards).toBeGreaterThan(0)
 
-    // Tablet: should still display team cards with responsive grid
+    // Tablet (768px): should display table (breakpoint is 768px)
     await page.setViewportSize({ width: 768, height: 1024 })
     await page.reload()
     await page.waitForLoadState('networkidle')
-    await page.waitForSelector('[data-testid="team-card"]')
+    await page.waitForSelector('[data-testid="dense-teams-view"]')
+    await page.waitForSelector('table')
 
-    teamCards = await page.locator('[data-testid="team-card"]').count()
-    expect(teamCards).toBeGreaterThan(0)
+    // Verify table is displayed
+    let tables = await page.locator('table').count()
+    expect(tables).toBeGreaterThan(0)
 
-    // Desktop: should display team cards in 3-column grid
+    // Desktop: should display table
     await page.setViewportSize({ width: 1920, height: 1080 })
     await page.reload()
     await page.waitForLoadState('networkidle')
-    await page.waitForSelector('[data-testid="team-card"]')
+    await page.waitForSelector('[data-testid="dense-teams-view"]')
+    await page.waitForSelector('table')
 
-    teamCards = await page.locator('[data-testid="team-card"]').count()
-    expect(teamCards).toBeGreaterThan(0)
+    tables = await page.locator('table').count()
+    expect(tables).toBeGreaterThan(0)
 
-    // Check that responsive grid containers exist (one per division level)
-    const gridContainer = page.locator('.grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3')
-    const gridCount = await gridContainer.count()
-    expect(gridCount).toBeGreaterThan(0) // At least one grid should exist
+    // Check that phase sections exist
+    const phaseSections = page.locator('h2:has-text("Phase")')
+    const phaseCount = await phaseSections.count()
+    expect(phaseCount).toBeGreaterThan(0) // At least one phase should exist
   })
 
   test('should adapt dashboard stats grid responsively (HomePage)', async ({ page }) => {

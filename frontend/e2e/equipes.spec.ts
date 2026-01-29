@@ -97,9 +97,9 @@ test.describe('EquipesPage Dense Table View', () => {
     // Dense teams view should be visible with teams
     await expect(page.locator('[data-testid="dense-teams-view"]')).toBeVisible()
 
-    // Check that team count is displayed and greater than 0
-    const teamCountText = await page.locator('text=/\\d+ équipes?/').textContent()
-    expect(teamCountText).toMatch(/\d+ équipes?/)
+    // Check that team count div is displayed (first occurrence at top level)
+    const teamCountDiv = page.locator('.text-sm.text-gray-600').filter({ hasText: /\d+ équipes?/ }).first()
+    await expect(teamCountDiv).toBeVisible()
   })
 
   test('should navigate to team detail view from desktop table', async ({ page }) => {
@@ -149,9 +149,18 @@ test.describe('EquipesPage Dense Table View', () => {
   test('should display team stats in detail view', async ({ page }) => {
     await page.goto('/equipes')
 
-    // Wait and click first team
-    await page.waitForSelector('[data-testid="team-card"]')
-    await page.locator('[data-testid="team-card"]').first().click()
+    // Wait for dense view and click first team
+    await page.waitForSelector('[data-testid="dense-teams-view"]')
+
+    // Check viewport to determine what to click
+    const viewport = page.viewportSize()
+    if (viewport && viewport.width < 768) {
+      await page.waitForSelector('[data-testid="compact-team-card"]')
+      await page.locator('[data-testid="compact-team-card"]').first().click()
+    } else {
+      await page.waitForSelector('table')
+      await page.locator('tbody tr').first().click()
+    }
 
     // Wait for detail view
     await page.waitForSelector('[data-testid="team-stats"]')
@@ -165,8 +174,17 @@ test.describe('EquipesPage Dense Table View', () => {
     await page.goto('/equipes')
 
     // Navigate to detail view
-    await page.waitForSelector('[data-testid="team-card"]')
-    await page.locator('[data-testid="team-card"]').first().click()
+    await page.waitForSelector('[data-testid="dense-teams-view"]')
+
+    // Check viewport to determine what to click
+    const viewport = page.viewportSize()
+    if (viewport && viewport.width < 768) {
+      await page.waitForSelector('[data-testid="compact-team-card"]')
+      await page.locator('[data-testid="compact-team-card"]').first().click()
+    } else {
+      await page.waitForSelector('table')
+      await page.locator('tbody tr').first().click()
+    }
 
     // Wait for tabs to appear
     await page.waitForSelector('[data-testid="tabs"]')
@@ -253,8 +271,17 @@ test.describe('EquipesPage Dense Table View', () => {
     await page.goto('/equipes')
 
     // Navigate to detail view
-    await page.waitForSelector('[data-testid="team-card"]')
-    await page.locator('[data-testid="team-card"]').first().click()
+    await page.waitForSelector('[data-testid="dense-teams-view"]')
+
+    // Check viewport to determine what to click
+    const viewport = page.viewportSize()
+    if (viewport && viewport.width < 768) {
+      await page.waitForSelector('[data-testid="compact-team-card"]')
+      await page.locator('[data-testid="compact-team-card"]').first().click()
+    } else {
+      await page.waitForSelector('table')
+      await page.locator('tbody tr').first().click()
+    }
 
     // Wait for match results
     await page.waitForSelector('[data-testid="match-result-list"]')
@@ -298,10 +325,13 @@ test.describe('EquipesPage Dense Table View', () => {
     // Wait for table
     await page.waitForSelector('table')
 
-    // Check for sortable column headers
-    const equipeHeader = page.locator('th:has-text("Équipe")')
-    const cltHeader = page.locator('th:has-text("Clt")')
-    const ptsHeader = page.locator('th:has-text("Pts")')
+    // Target the first table specifically to avoid multiple matches
+    const firstTable = page.locator('table').first()
+
+    // Check for sortable column headers in first table
+    const equipeHeader = firstTable.locator('th', { hasText: 'Équipe' })
+    const cltHeader = firstTable.locator('th', { hasText: 'Clt' })
+    const ptsHeader = firstTable.locator('th', { hasText: 'Pts' })
 
     await expect(equipeHeader).toBeVisible()
     await expect(cltHeader).toBeVisible()
@@ -311,8 +341,8 @@ test.describe('EquipesPage Dense Table View', () => {
     await cltHeader.click()
     await page.waitForTimeout(300)
 
-    // After clicking, there should be a sort icon (ChevronUp or ChevronDown)
-    const sortIcon = page.locator('svg[class*="lucide"]').first()
+    // After clicking, there should be a sort icon (ChevronUp or ChevronDown) in the clicked header
+    const sortIcon = cltHeader.locator('svg[class*="lucide"]')
     await expect(sortIcon).toBeVisible()
   })
 
