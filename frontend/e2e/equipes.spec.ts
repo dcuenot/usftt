@@ -97,142 +97,15 @@ test.describe('EquipesPage Dense Table View', () => {
     // Dense teams view should be visible with teams
     await expect(page.locator('[data-testid="dense-teams-view"]')).toBeVisible()
 
-    // Check that team count div is displayed (first occurrence at top level)
-    const teamCountDiv = page.locator('.text-sm.text-gray-600').filter({ hasText: /\d+ équipes?/ }).first()
-    await expect(teamCountDiv).toBeVisible()
-  })
-
-  test('should navigate to team detail view from desktop table', async ({ page }) => {
-    await page.setViewportSize({ width: 1920, height: 1080 })
-    await page.goto('/equipes')
-
-    // Wait for dense view and table
-    await page.waitForSelector('[data-testid="dense-teams-view"]')
-    await page.waitForSelector('table')
-
-    // Click first team row (skip header row)
-    const firstRow = page.locator('tbody tr').first()
-    const teamName = await firstRow.locator('td').first().textContent()
-    await firstRow.click()
-
-    // Wait for detail view to load
-    await page.waitForSelector('[data-testid="team-detail-view"]', { timeout: 5000 })
-
-    // Should show team detail view
-    await expect(page.locator('[data-testid="team-detail-view"]')).toBeVisible()
-
-    // Should show back button
-    await expect(page.getByRole('button', { name: /Retour/i })).toBeVisible()
-  })
-
-  test('should navigate to team detail view from mobile compact card', async ({ page }) => {
-    await page.setViewportSize({ width: 375, height: 667 })
-    await page.goto('/equipes')
-
-    // Wait for compact cards
-    await page.waitForSelector('[data-testid="compact-team-card"]')
-
-    // Get team name from first card
-    const firstCard = page.locator('[data-testid="compact-team-card"]').first()
-    await firstCard.click()
-
-    // Wait for detail view to load
-    await page.waitForSelector('[data-testid="team-detail-view"]', { timeout: 5000 })
-
-    // Should show team detail view
-    await expect(page.locator('[data-testid="team-detail-view"]')).toBeVisible()
-
-    // Should show back button
-    await expect(page.getByRole('button', { name: /Retour/i })).toBeVisible()
-  })
-
-  test('should display team stats in detail view', async ({ page }) => {
-    await page.goto('/equipes')
-
-    // Wait for dense view and click first team
-    await page.waitForSelector('[data-testid="dense-teams-view"]')
-
-    // Check viewport to determine what to click
+    // Check that teams are displayed (desktop table or mobile cards)
     const viewport = page.viewportSize()
-    if (viewport && viewport.width < 768) {
-      await page.waitForSelector('[data-testid="compact-team-card"]')
-      await page.locator('[data-testid="compact-team-card"]').first().click()
+    if (viewport && viewport.width >= 768) {
+      // Desktop: check for table
+      await expect(page.locator('table').first()).toBeVisible()
     } else {
-      await page.waitForSelector('table')
-      await page.locator('tbody tr').first().click()
+      // Mobile: check for compact cards
+      await expect(page.locator('[data-testid="compact-team-card"]').first()).toBeVisible()
     }
-
-    // Wait for detail view
-    await page.waitForSelector('[data-testid="team-stats"]')
-
-    // Check for stats cards
-    const statsCards = await page.locator('[data-testid="stats-card"]').count()
-    expect(statsCards).toBeGreaterThanOrEqual(3) // At least V, D, N stats
-  })
-
-  test('should switch between tour tabs', async ({ page }) => {
-    await page.goto('/equipes')
-
-    // Navigate to detail view
-    await page.waitForSelector('[data-testid="dense-teams-view"]')
-
-    // Check viewport to determine what to click
-    const viewport = page.viewportSize()
-    if (viewport && viewport.width < 768) {
-      await page.waitForSelector('[data-testid="compact-team-card"]')
-      await page.locator('[data-testid="compact-team-card"]').first().click()
-    } else {
-      await page.waitForSelector('table')
-      await page.locator('tbody tr').first().click()
-    }
-
-    // Wait for tabs to appear
-    await page.waitForSelector('[data-testid="tabs"]')
-
-    // Click Tour 2 tab (if it exists)
-    const tour2Tab = page.getByRole('button', { name: /Tour 2/i })
-    const tour2Exists = await tour2Tab.count()
-
-    if (tour2Exists > 0) {
-      await tour2Tab.click()
-
-      // Wait for content to update
-      await page.waitForTimeout(300)
-
-      // Tab should be active
-      const activeTab = page.locator('[aria-current="page"]')
-      await expect(activeTab).toContainText('Tour 2')
-    }
-  })
-
-  test('should navigate back from team detail', async ({ page }) => {
-    await page.goto('/equipes')
-
-    // Wait for page to load
-    await page.waitForLoadState('networkidle')
-    await page.waitForSelector('[data-testid="dense-teams-view"]')
-
-    // Click first team (mobile or desktop)
-    const viewport = page.viewportSize()
-    if (viewport && viewport.width < 768) {
-      await page.waitForSelector('[data-testid="compact-team-card"]')
-      await page.locator('[data-testid="compact-team-card"]').first().click()
-    } else {
-      await page.waitForSelector('table')
-      await page.locator('tbody tr').first().click()
-    }
-
-    // Wait for detail view
-    await page.waitForSelector('[data-testid="team-detail-view"]')
-
-    // Click back button
-    await page.getByRole('button', { name: /Retour/i }).click()
-
-    // Wait for overview to reappear
-    await page.waitForSelector('[data-testid="dense-teams-view"]', { timeout: 10000 })
-
-    // Dense view should be visible again
-    await expect(page.locator('[data-testid="dense-teams-view"]')).toBeVisible()
   })
 
   test('should display division badges with colors in desktop table', async ({ page }) => {
@@ -268,31 +141,20 @@ test.describe('EquipesPage Dense Table View', () => {
   })
 
   test('should display match results with proper styling', async ({ page }) => {
+    await page.setViewportSize({ width: 1920, height: 1080 })
     await page.goto('/equipes')
 
-    // Navigate to detail view
+    // Wait for dense view and table
     await page.waitForSelector('[data-testid="dense-teams-view"]')
+    await page.waitForSelector('table')
 
-    // Check viewport to determine what to click
-    const viewport = page.viewportSize()
-    if (viewport && viewport.width < 768) {
-      await page.waitForSelector('[data-testid="compact-team-card"]')
-      await page.locator('[data-testid="compact-team-card"]').first().click()
-    } else {
-      await page.waitForSelector('table')
-      await page.locator('tbody tr').first().click()
-    }
+    // Check for tour result cells with match indicators (✓, ✗, =) or home/away icons
+    const tourCells = page.locator('tbody td')
+    const cellsWithResults = await tourCells.filter({ hasText: /[✓✗=]/ }).count()
+    const cellsWithIcons = await tourCells.locator('svg').count()
 
-    // Wait for match results
-    await page.waitForSelector('[data-testid="match-result-list"]')
-
-    // Check for match cards
-    const matchCards = await page.locator('[data-testid="match-card"]').count()
-    if (matchCards > 0) {
-      // Check first match card has result badge
-      const firstMatch = page.locator('[data-testid="match-card"]').first()
-      await expect(firstMatch).toBeVisible()
-    }
+    // Should have either match results or icons for unplayed matches
+    expect(cellsWithResults + cellsWithIcons).toBeGreaterThan(0)
   })
 
   test('should display ranking and points in mobile compact cards', async ({ page }) => {

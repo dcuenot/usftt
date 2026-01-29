@@ -28,7 +28,9 @@
       // the correct url will be waiting in the browser's history for
       // the single page app to route accordingly.
       (function(l) {
-        if (l.search[1] === '/' ) {
+        // Only run if there's a redirect query string from 404.html
+        // and we're not in a test environment (localhost without the redirect pattern)
+        if (l.search && l.search[1] === '/' && l.pathname.indexOf('/usftt') !== -1) {
           var decoded = l.search.slice(1).split('&').map(function(s) {
             return s.replace(/~and~/g, '&')
           }).join('?');
