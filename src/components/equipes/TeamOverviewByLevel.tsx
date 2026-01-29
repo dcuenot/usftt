@@ -52,7 +52,7 @@ export function TeamOverviewByLevel({ teams, onSelectTeam }: TeamOverviewByLevel
   ] as const
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" data-testid="team-overview">
       {levels.map(({ key, label, color }) => {
         const levelTeams = teamsByLevel[key]
 

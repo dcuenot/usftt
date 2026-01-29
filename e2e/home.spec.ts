@@ -5,17 +5,19 @@ test.describe('HomePage Dashboard', () => {
     await page.goto('/')
 
     // Wait for data to load
+    await page.waitForLoadState('networkidle')
     await page.waitForSelector('[data-testid="dashboard-header"]', { timeout: 10000 })
 
     // Check all stats cards are visible
     const statsCards = await page.locator('[data-testid="stats-card"]').count()
     expect(statsCards).toBe(4)
 
-    // Check for expected stats labels
-    await expect(page.getByText('Total joueurs')).toBeVisible()
-    await expect(page.getByText('Joueurs actifs')).toBeVisible()
-    await expect(page.getByText('Matchs joués')).toBeVisible()
-    await expect(page.getByText('Moyenne de points')).toBeVisible()
+    // Check for expected stats labels within dashboard header
+    const dashboard = page.locator('[data-testid="dashboard-header"]')
+    await expect(dashboard.getByText('Total joueurs')).toBeVisible()
+    await expect(dashboard.getByText('Joueurs actifs')).toBeVisible()
+    await expect(dashboard.getByText('Matchs joués')).toBeVisible()
+    await expect(dashboard.getByText('Moyenne de points')).toBeVisible()
   })
 
   test('should display player cards on mobile', async ({ page }) => {

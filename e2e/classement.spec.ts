@@ -186,17 +186,21 @@ test.describe('ClassementPage Responsive', () => {
   })
 
   test('should show skeleton loaders while loading', async ({ page }) => {
-    // Intercept network to slow it down
+    // Intercept network to slow it down significantly
     await page.route('**/backend/*.csv', async (route) => {
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      await new Promise((resolve) => setTimeout(resolve, 2000))
       await route.continue()
     })
 
-    await page.goto('/classement')
+    // Start navigation
+    const navigationPromise = page.goto('/classement')
 
-    // Check for skeleton cards
+    // Check for skeleton cards immediately while loading
     const skeletonCards = page.locator('[data-testid="skeleton-card"]')
-    await expect(skeletonCards.first()).toBeVisible()
+    await expect(skeletonCards.first()).toBeVisible({ timeout: 2000 })
+
+    // Wait for navigation to complete
+    await navigationPromise
   })
 
   test('should use filter panel component', async ({ page }) => {

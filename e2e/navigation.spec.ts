@@ -41,8 +41,12 @@ test.describe('Navigation', () => {
     await page.setViewportSize({ width: 375, height: 667 })
     await page.goto('/')
 
-    // Mobile bottom nav should be visible
-    const mobileNav = page.locator('[role="navigation"]').last()
+    // Wait for page to load
+    await page.waitForLoadState('networkidle')
+    await page.waitForSelector('h1')
+
+    // Mobile bottom nav should be visible (fixed at bottom)
+    const mobileNav = page.locator('nav.fixed')
     await expect(mobileNav).toBeVisible()
 
     // Should contain all nav links
