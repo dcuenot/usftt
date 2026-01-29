@@ -162,11 +162,10 @@ test.describe('Responsive Design', () => {
     teamCards = await page.locator('[data-testid="team-card"]').count()
     expect(teamCards).toBeGreaterThan(0)
 
-    // Check that grid container has responsive classes (inside accordion)
+    // Check that responsive grid containers exist (one per division level)
     const gridContainer = page.locator('.grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3')
-    if ((await gridContainer.count()) > 0) {
-      await expect(gridContainer).toBeVisible()
-    }
+    const gridCount = await gridContainer.count()
+    expect(gridCount).toBeGreaterThan(0) // At least one grid should exist
   })
 
   test('should adapt dashboard stats grid responsively (HomePage)', async ({ page }) => {
