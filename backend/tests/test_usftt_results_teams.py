@@ -3,11 +3,12 @@
 import pytest
 import sys
 import os
+from unittest.mock import Mock, MagicMock
 
 # Add parent directory to path to import the module
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from usftt_results_teams import normalize_division, extract_team_id
+from usftt_results_teams import normalize_division, extract_team_id, get_team_ranking
 
 
 class TestNormalizeDivision:
@@ -153,3 +154,164 @@ class TestExtractTeamId:
         # Should be masculine (no 'Dames')
         assert extract_team_id(libequipe, "R1 dames") == "1G"
         assert extract_team_id(libequipe, "R1 DAMES") == "1G"
+
+
+class TestGetTeamRanking:
+    """Test cases for get_team_ranking function."""
+
+    def test_get_ranking_single_team(self):
+        """Test getting ranking for a single team in the list."""
+        mock_client = Mock()
+        mock_client.classement_poule.return_value = {
+            'resultat': {
+                'liste': {
+                    'equipe': {
+                        'libequipe': 'FONTENAY USTT 1',
+                        'rang': '1',
+                        'pts': '15',
+                        'J': '5',
+                        'V': '5',
+                        'N': '0',
+                        'D': '0',
+                        'F': '0'
+                    }
+                }
+            }
+        }
+
+        result = get_team_ranking(mock_client, '12345', 'FONTENAY USTT 1')
+
+        assert result['rang'] == '1'
+        assert result['points'] == '15'
+        assert result['joues'] == '5'
+        assert result['victoires'] == '5'
+        assert result['nuls'] == '0'
+        assert result['defaites'] == '0'
+        assert result['forfaits'] == '0'
+
+    def test_get_ranking_multiple_teams(self):
+        """Test getting ranking when multiple teams are in the list."""
+        mock_client = Mock()
+        mock_client.classement_poule.return_value = {
+            'resultat': {
+                'liste': {
+                    'equipe': [
+                        {
+                            'libequipe': 'TEAM A',
+                            'rang': '1',
+                            'pts': '20',
+                            'J': '6',
+                            'V': '6',
+                            'N': '0',
+                            'D': '0',
+                            'F': '0'
+                        },
+                        {
+                            'libequipe': 'FONTENAY USTT 2',
+                            'rang': '3',
+                            'pts': '10',
+                            'J': '6',
+                            'V': '3',
+                            'N': '1',
+                            'D': '2',
+                            'F': '0'
+                        },
+                        {
+                            'libequipe': 'TEAM C',
+                            'rang': '5',
+                            'pts': '5',
+                            'J': '6',
+                            'V': '1',
+                            'N': '0',
+                            'D': '5',
+                            'F': '0'
+                        }
+                    ]
+                }
+            }
+        }
+
+        result = get_team_ranking(mock_client, '12345', 'FONTENAY USTT 2')
+
+        assert result['rang'] == '3'
+        assert result['points'] == '10'
+        assert result['joues'] == '6'
+        assert result['victoires'] == '3'
+        assert result['nuls'] == '1'
+        assert result['defaites'] == '2'
+
+    def test_get_ranking_team_not_found(self):
+        """Test when the team is not found in the ranking."""
+        mock_client = Mock()
+        mock_client.classement_poule.return_value = {
+            'resultat': {
+                'liste': {
+                    'equipe': [
+                        {
+                            'libequipe': 'TEAM A',
+                            'rang': '1',
+                            'pts': '20',
+                            'J': '6',
+                            'V': '6',
+                            'N': '0',
+                            'D': '0',
+                            'F': '0'
+                        }
+                    ]
+                }
+            }
+        }
+
+        result = get_team_ranking(mock_client, '12345', 'NONEXISTENT TEAM')
+
+        assert result['rang'] == 'N/A'
+        assert result['points'] == 'N/A'
+        assert result['joues'] == '0'
+        assert result['victoires'] == '0'
+
+    def test_get_ranking_api_error(self):
+        """Test handling of API errors."""
+        mock_client = Mock()
+        mock_client.classement_poule.side_effect = Exception("API Error")
+
+        result = get_team_ranking(mock_client, '12345', 'FONTENAY USTT 1')
+
+        assert result['rang'] == 'N/A'
+        assert result['points'] == 'N/A'
+        assert result['joues'] == '0'
+
+    def test_get_ranking_missing_fields(self):
+        """Test when some ranking fields are missing."""
+        mock_client = Mock()
+        mock_client.classement_poule.return_value = {
+            'resultat': {
+                'liste': {
+                    'equipe': {
+                        'libequipe': 'FONTENAY USTT 1',
+                        'rang': '2',
+                        'pts': '12'
+                        # Missing J, V, N, D, F fields
+                    }
+                }
+            }
+        }
+
+        result = get_team_ranking(mock_client, '12345', 'FONTENAY USTT 1')
+
+        assert result['rang'] == '2'
+        assert result['points'] == '12'
+        assert result['joues'] == '0'
+        assert result['victoires'] == '0'
+        assert result['nuls'] == '0'
+        assert result['defaites'] == '0'
+        assert result['forfaits'] == '0'
+
+    def test_get_ranking_empty_response(self):
+        """Test when API returns empty or malformed response."""
+        mock_client = Mock()
+        mock_client.classement_poule.return_value = {}
+
+        result = get_team_ranking(mock_client, '12345', 'FONTENAY USTT 1')
+
+        assert result['rang'] == 'N/A'
+        assert result['points'] == 'N/A'
