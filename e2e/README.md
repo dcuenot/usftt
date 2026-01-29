@@ -386,27 +386,30 @@ page.on('pageerror', error => console.log('PAGE ERROR:', error))
 
 ## CI/CD Integration
 
-### Smoke Tests Strategy
+### Full Test Suite in CI/CD
 
-**CI/CD runs only smoke tests for fast feedback:**
+**CI/CD runs the complete E2E test suite:**
 
-**File**: `e2e/smoke.spec.ts` (5 tests)
-- Load home page
-- Load classement page
-- Load equipes page
-- Navigate between pages
-- Verify CSV data loading and display
+**Coverage**: 150+ tests across 8 test files
+- `smoke.spec.ts` (5 tests) - Core functionality
+- `home.spec.ts` (13 tests) - HomePage features
+- `classement.spec.ts` (13 tests) - Rankings page
+- `equipes.spec.ts` (14 tests) - Teams page
+- `navigation.spec.ts` (6 tests) - Navigation flows
+- `timestamp.spec.ts` (6 tests) - CSV timestamps
+- `accessibility.spec.ts` (12 tests) - WCAG 2.1 Level AA
+- `responsive.spec.ts` (90+ tests) - Responsive design
 
-**Execution time**: ~11 seconds
-**Browser**: Chromium only
-**Timeout**: 15 seconds (fail fast)
-**Retries**: 0
+**Execution time**: ~10-15 minutes
+**Browser**: Chromium only (CI)
+**Timeout**: 15 seconds per test
+**Retries**: 0 (fail fast)
 
-This lean test suite ensures:
-- ✅ Fast CI/CD pipeline
-- ✅ Quick deployment feedback
-- ✅ Core functionality verification
-- ✅ No blocking on flaky tests
+This comprehensive test suite ensures:
+- ✅ All features thoroughly tested before deployment
+- ✅ Responsive design verified across viewports
+- ✅ Accessibility compliance checked
+- ✅ CSV data loading validated
 
 ### GitHub Actions Configuration
 
@@ -421,8 +424,8 @@ Tests run automatically in `.github/workflows/deploy.yml`:
     mkdir -p public/backend
     cp backend/*.csv public/backend/
 
-- name: Run smoke tests
-  run: npx playwright test e2e/smoke.spec.ts --project=chromium --timeout=15000 --retries=0
+- name: Run E2E tests (150+ tests)
+  run: npx playwright test --project=chromium --reporter=list
 
 - name: Upload test results
   uses: actions/upload-artifact@v4
@@ -433,15 +436,19 @@ Tests run automatically in `.github/workflows/deploy.yml`:
     retention-days: 7
 ```
 
-### Full Test Suite
+### Running Tests Locally
 
-Run the full test suite locally before major releases:
+Run the full test suite before pushing changes:
 
 ```bash
-# Run all 150+ tests across all browsers
+# Run all 150+ tests across all browsers (chromium, mobile, tablet)
 npm run test:e2e
 
-# Takes ~10-15 minutes
+# Run only chromium tests (faster)
+npm run test:e2e -- --project=chromium
+
+# Run specific test file
+npm run test:e2e -- smoke.spec.ts
 ```
 
 ### Key Fixes Applied

@@ -43,8 +43,8 @@ jobs:
           cp backend/*.csv public/backend/
           ls -lh public/backend/
 
-      - name: Run smoke tests (5 tests)
-        run: npx playwright test e2e/smoke.spec.ts --project=chromium --reporter=list --timeout=15000 --retries=0
+      - name: Run E2E tests (150+ tests)
+        run: npx playwright test --project=chromium --reporter=list
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
