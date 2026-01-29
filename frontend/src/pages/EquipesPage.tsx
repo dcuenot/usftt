@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useTeamData } from '@/hooks/useTeamData'
 import { LastUpdate } from '@/components/shared/LastUpdate'
-import { TeamOverviewByLevel } from '@/components/equipes/TeamOverviewByLevel'
+import { DenseTeamsView } from '@/components/equipes/DenseTeamsView'
 import { TeamDetailView } from '@/components/equipes/TeamDetailView'
 import { SkeletonCard } from '@/components/ui/SkeletonCard'
 
@@ -144,9 +144,10 @@ export function EquipesPage() {
         {filteredTeams.length} équipe{filteredTeams.length > 1 ? 's' : ''}
       </div>
 
-      {/* Team Overview by Division Level */}
-      <TeamOverviewByLevel
+      {/* Dense Teams View */}
+      <DenseTeamsView
         teams={filteredTeams}
+        tours={tours}
         onSelectTeam={setSelectedTeamId}
       />
     </div>

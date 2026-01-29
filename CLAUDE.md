@@ -20,7 +20,7 @@ This is a table tennis club management web application for USFTT (US Fontenay TT
 - **Pages**:
   - `/` (HomePage) - Dashboard with stats, player list with filtering and progression tracking
   - `/classement` (ClassementPage) - Individual ranking with responsive table/cards
-  - `/equipes` (EquipesPage) - Team results with card-based overview and detail views
+  - `/equipes` (EquipesPage) - Team results with dense table view (desktop) and compact cards (mobile), organized by phase and division
   - `/tests` (TestsPage) - Testing page
 - **Mobile-first design**: Zero horizontal scrolling, card layouts on mobile, responsive tables on desktop
 - **CSV data consumption**: Frontend loads CSV files via Papa Parse with Last-Modified timestamps
@@ -95,7 +95,7 @@ nvm use 20
     - `shared/` - Shared components (LastUpdate, ProgressionBadge, GenderIcon)
     - `home/` - HomePage-specific components (DashboardHeader, PlayerList)
     - `classement/` - ClassementPage components (PlayerRankingCard)
-    - `equipes/` - EquipesPage components (TeamCard, TeamStats, MatchResultList, etc.)
+    - `equipes/` - EquipesPage components (DenseTeamTable, CompactTeamCard, DenseTeamsView, TeamCard, TeamStats, MatchResultList, etc.)
   - `src/pages/` - Route pages (HomePage, ClassementPage, EquipesPage, TestsPage)
   - `src/hooks/` - Custom hooks:
     - Data loading: `useCsvData`, `useCompetitorData`, `useTeamData`
@@ -223,6 +223,38 @@ Examples:
 - **TypeScript**: Full type safety for data models
 - **Component library**: 13 reusable UI components with consistent design patterns
 
+#### Team Results Display (EquipesPage)
+The team results page uses a responsive, phase-organized display system:
+
+**Data Organization**:
+- **Phase support**: Teams are grouped by phase (Phase 1 and Phase 2) extracted from team names
+- **Composite keys**: Each team uses a composite ID format (e.g., "1G-Phase1", "1G-Phase2") combining team_id and phase
+- **Division grouping**: Within each phase, teams are organized by division level (Nationale, Régionale, Départementale)
+- **Team sorting**: Default sort by team number (mixing men's and women's teams), then by gender, then by phase
+- **Nullish coalescing fix**: Uses `??` operator instead of `||` to handle zero scores correctly (prevents `0` from being treated as falsy)
+
+**Desktop View (DenseTeamTable)**:
+- Sortable table with sticky first column
+- Columns: Équipe (team name with division badge), Clt (rank), Pts (points), J1-J7 (tour results)
+- Tour result cells display icon and score on same line for density
+- Opponent names truncated to 11 characters with full name in HTML title tooltip
+- Rank badges color-coded (gold for 1st, silver for 2nd, bronze for 3rd)
+- Match results: ✓ (victory), ✗ (defeat), = (draw) with color coding
+- Unplayed matches: Home icon (🏠) for home matches, Plane icon (✈️) for away matches (from Lucide React)
+
+**Mobile View (CompactTeamCard)**:
+- Card-based layout with header, stats grid, and horizontal scrollable tour results
+- Shows rank badge, points, victories, defeats
+- Tour cards with J notation (J1, J2, etc.)
+- Scroll hint displayed when more than 3 tours
+
+**Technical Implementation**:
+- `DenseTeamsView`: Wrapper component that groups teams by phase and division level, switches between table/card views based on screen size
+- `useTeamData` hook: Extracts phase from team names, creates composite keys, handles team data organization
+- `getMatchResult`: Helper function that returns ReactNode for icons (Home/Plane components) or string for match result symbols
+- Responsive breakpoint: 768px (uses `useMediaQuery` hook)
+- Phase order: Reverse sorted (Phase 2 displayed before Phase 1)
+
 #### Performance Optimizations
 - **Code splitting**: React.lazy for page components
 - **CSV caching**: In-memory cache with 5-minute TTL
@@ -236,5 +268,7 @@ Examples:
   - Accessibility (WCAG 2.1 Level AA basics)
   - Responsive design (6 viewports)
   - Page-specific features (home, classement, equipes, timestamp)
+  - Team results dense table view (phase organization, home/away icons, sortable columns, responsive table/card switching)
 - **Test execution**: Automated in CI/CD pipeline before deployment
-- **Test coverage**: All critical user flows, responsive layouts, filtering, search
+- **Test coverage**: All critical user flows, responsive layouts, filtering, search, dense table features
+- **Equipes page tests**: 21 tests covering dense table on desktop, compact cards on mobile, phase organization, home/away icons for unplayed matches, sortable columns, opponent name tooltips, rank badges, match result indicators, accordion sections, and responsive behavior
