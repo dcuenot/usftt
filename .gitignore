@@ -1,18 +1,47 @@
+# Environment variables and sensitive data
 .env
 *.log
-.vscode/
 
-# React/Vite
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Python virtual environments
+.venv
+venv/
+ENV/
+
+# Python testing (pytest)
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Frontend (React/Vite)
 node_modules
 dist
 dist-ssr
 *.local
 .vite
-.DS_Store
 tsconfig.tsbuildinfo
 
-# CSV files in public are copies from backend/ (for dev server)
-public/backend/*.csv
-# Playwright test results
+# Frontend CSV files (copies from backend/ for dev server)
+frontend/public/backend/*.csv
+
+# Frontend testing (Playwright)
 playwright-report/
 test-results/

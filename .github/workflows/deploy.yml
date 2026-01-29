@@ -63,9 +63,11 @@ jobs:
           node-version: lts/*
 
       - name: Install dependencies
+        working-directory: ./frontend
         run: npm ci
 
       - name: Install Playwright Browsers
+        working-directory: ./frontend
         run: npx playwright install --with-deps chromium
 
       - name: Verify CSV files exist
@@ -75,11 +77,12 @@ jobs:
 
       - name: Prepare CSV files for tests
         run: |
-          mkdir -p public/backend
-          cp backend/*.csv public/backend/
-          ls -lh public/backend/
+          mkdir -p frontend/public/backend
+          cp backend/*.csv frontend/public/backend/
+          ls -lh frontend/public/backend/
 
       - name: Run E2E tests (150+ tests)
+        working-directory: ./frontend
         run: npx playwright test --project=chromium --reporter=list
 
       - name: Upload test results
@@ -87,16 +90,17 @@ jobs:
         if: failure()
         with:
           name: playwright-report
-          path: playwright-report/
+          path: frontend/playwright-report/
           retention-days: 7
 
       - name: Build
+        working-directory: ./frontend
         run: npm run build
 
       - name: Copy CSV files
         run: |
-          mkdir -p dist/backend
-          cp backend/*.csv dist/backend/
+          mkdir -p frontend/dist/backend
+          cp backend/*.csv frontend/dist/backend/
 
       - name: Setup Pages
         if: github.ref == 'refs/heads/main'
@@ -106,7 +110,7 @@ jobs:
         if: github.ref == 'refs/heads/main'
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './dist'
+          path: './frontend/dist'
 
       - name: Archive npm failure logs
         uses: actions/upload-artifact@v4
