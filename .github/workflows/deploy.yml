@@ -72,13 +72,13 @@ jobs:
 
       - name: Verify CSV files exist
         run: |
-          ls -lh backend/*.csv
+          ls -lh backend/data/*.csv
           echo "CSV files are available"
 
       - name: Prepare CSV files for tests
         run: |
           mkdir -p frontend/public/backend
-          cp backend/*.csv frontend/public/backend/
+          cp backend/data/*.csv frontend/public/backend/
           ls -lh frontend/public/backend/
 
       - name: Run E2E tests (150+ tests)
@@ -100,7 +100,7 @@ jobs:
       - name: Copy CSV files
         run: |
           mkdir -p frontend/dist/backend
-          cp backend/*.csv frontend/dist/backend/
+          cp backend/data/*.csv frontend/dist/backend/
 
       - name: Setup Pages
         if: github.ref == 'refs/heads/main'
