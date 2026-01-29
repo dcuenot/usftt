@@ -85,7 +85,7 @@ export function DenseTeamsView({ teams, tours }: DenseTeamsViewProps) {
         return (
           <div key={phase} className="space-y-4">
             {/* Phase Header */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-baseline gap-3">
               <h2 className="text-2xl font-bold text-gray-900">Phase {phase}</h2>
               <span className="text-sm text-gray-500">
                 ({totalPhaseTeams} équipe{totalPhaseTeams > 1 ? 's' : ''})
@@ -105,7 +105,7 @@ export function DenseTeamsView({ teams, tours }: DenseTeamsViewProps) {
                   <Accordion
                     key={`${phase}-${key}`}
                     title={
-                      <div className="flex items-center justify-between w-full">
+                      <div className="flex items-baseline justify-between w-full">
                         <span className={`text-lg font-semibold ${color}`}>
                           {label}
                         </span>
