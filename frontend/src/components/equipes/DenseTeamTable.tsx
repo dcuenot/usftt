@@ -63,7 +63,7 @@ function getOpponentName(team: Team, tour: string): { full: string; short: strin
   const fullName = opponent.replace(/\s*-\s*Phase\s*\d+/i, '')
 
   // Truncate to 11 characters with ellipsis if needed
-  const shortName = fullName.length > 14 ? `${fullName.substring(0, 14)}..` : fullName
+  const shortName = fullName.length > 13 ? `${fullName.substring(0, 13)}..` : fullName
 
   return {
     full: fullName,
