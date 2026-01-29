@@ -390,11 +390,12 @@ page.on('pageerror', error => console.log('PAGE ERROR:', error))
 
 **CI/CD runs only smoke tests for fast feedback:**
 
-**File**: `e2e/smoke.spec.ts` (4 tests)
+**File**: `e2e/smoke.spec.ts` (5 tests)
 - Load home page
 - Load classement page
 - Load equipes page
 - Navigate between pages
+- Verify CSV data loading and display
 
 **Execution time**: ~11 seconds
 **Browser**: Chromium only
