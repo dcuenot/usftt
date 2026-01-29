@@ -31,9 +31,6 @@ ENV/
 coverage.xml
 htmlcov/
 
-# Backend generated data files
-backend/*.csv
-
 # Frontend (React/Vite)
 node_modules
 dist
