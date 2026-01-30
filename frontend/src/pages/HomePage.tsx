@@ -12,11 +12,14 @@ import { FilterPanel } from '@/components/ui/FilterPanel'
 import { RangeSlider } from '@/components/ui/RangeSlider'
 import { FilterPresets, FilterPreset, presetIcons } from '@/components/home/FilterPresets'
 import { FilterSummary, ActiveFilter } from '@/components/home/FilterSummary'
+import { ExportButton } from '@/components/ui/ExportButton'
 import { SkeletonCard } from '@/components/ui/SkeletonCard'
 import { SkeletonTable } from '@/components/ui/SkeletonTable'
 import { ErrorState } from '@/components/ui/ErrorState'
 import { Accordion } from '@/components/ui/Accordion'
+import { useToast } from '@/components/ui/Toast'
 import { calculateDashboardStats } from '@/utils/statistics'
+import { exportToCSV, generateFilename } from '@/utils/export'
 import { useIsMobile } from '@/hooks/useMediaQuery'
 
 export function HomePage() {
@@ -24,6 +27,7 @@ export function HomePage() {
   const [categoryFilter, setCategoryFilter] = useState<string>('')
   const [searchTerm, setSearchTerm] = useState<string>('')
   const isMobile = useIsMobile()
+  const { showToast } = useToast()
 
   // Point range filter
   const pointRange = useMemo(() => {
@@ -165,6 +169,31 @@ export function HomePage() {
     setCategoryFilter('')
     setSearchTerm('')
     setPointFilter(pointRange)
+  }
+
+  // Export to CSV
+  const handleExport = () => {
+    const exportHeaders = [
+      { key: 'licence', label: 'Licence' },
+      { key: 'sexe', label: 'Sexe' },
+      { key: 'prenom', label: 'Prénom' },
+      { key: 'nom', label: 'Nom' },
+      { key: 'cat', label: 'Catégorie' },
+      { key: 'point', label: 'Points' },
+      { key: 'parties', label: 'Nb matchs' },
+      { key: 'prg_m', label: 'Prog. Mensuelle' },
+      { key: 'prg_p', label: 'Prog. Phase' },
+      { key: 'prg_a', label: 'Prog. Annuelle' },
+    ]
+
+    const filename = generateFilename('joueurs_usftt')
+    exportToCSV(filteredCompetitors, exportHeaders, filename)
+
+    showToast({
+      title: 'Export réussi',
+      message: `${filteredCompetitors.length} joueur${filteredCompetitors.length > 1 ? 's' : ''} exporté${filteredCompetitors.length > 1 ? 's' : ''} dans ${filename}`,
+      variant: 'success',
+    })
   }
 
   // Define table columns
@@ -341,11 +370,19 @@ export function HomePage() {
         onClearAll={clearAllFilters}
       />
 
-      {/* Players count */}
-      <div className="text-sm text-gray-600">
-        {filteredCompetitors.length} joueur{filteredCompetitors.length > 1 ? 's' : ''}
-        {categoryFilter && ` dans la catégorie ${categoryFilter}`}
-        {searchTerm && ` correspondant à "${searchTerm}"`}
+      {/* Players count and export */}
+      <div className="flex items-center justify-between gap-4 flex-wrap">
+        <div className="text-sm text-gray-600 dark:text-gray-400">
+          {filteredCompetitors.length} joueur{filteredCompetitors.length > 1 ? 's' : ''}
+          {categoryFilter && ` dans la catégorie ${categoryFilter}`}
+          {searchTerm && ` correspondant à "${searchTerm}"`}
+        </div>
+
+        <ExportButton
+          onClick={handleExport}
+          disabled={filteredCompetitors.length === 0}
+          size="sm"
+        />
       </div>
 
       {/* Player List (responsive) */}

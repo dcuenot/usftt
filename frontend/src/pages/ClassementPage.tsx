@@ -12,6 +12,9 @@ import { PlayerRankingCard } from '@/components/classement/PlayerRankingCard'
 import { SkeletonCard } from '@/components/ui/SkeletonCard'
 import { SkeletonTable } from '@/components/ui/SkeletonTable'
 import { ErrorState } from '@/components/ui/ErrorState'
+import { ExportButton } from '@/components/ui/ExportButton'
+import { useToast } from '@/components/ui/Toast'
+import { exportToCSV, generateFilename } from '@/utils/export'
 import { Eye, EyeOff } from 'lucide-react'
 import { useIsMobile } from '@/hooks/useMediaQuery'
 
@@ -21,6 +24,7 @@ export function ClassementPage() {
   const [categoryFilter, setCategoryFilter] = useState<string>('')
   const [showInactive, setShowInactive] = useState(false)
   const isMobile = useIsMobile()
+  const { showToast } = useToast()
 
   // Extract unique categories for filter
   const categories = useMemo(() => {
@@ -108,6 +112,31 @@ export function ClassementPage() {
     ],
     []
   )
+
+  // Export handler
+  const handleExport = () => {
+    const exportHeaders = [
+      { key: 'licence', label: 'Licence' },
+      { key: 'sexe', label: 'Sexe' },
+      { key: 'prenom', label: 'Prénom' },
+      { key: 'nom', label: 'Nom' },
+      { key: 'cat', label: 'Catégorie' },
+      { key: 'point', label: 'Points' },
+      { key: 'parties', label: 'Nb matchs' },
+      { key: 'prg_m', label: 'Prog. Mensuelle' },
+      { key: 'prg_p', label: 'Prog. Phase' },
+      { key: 'prg_a', label: 'Prog. Annuelle' },
+    ]
+
+    const filename = generateFilename('classement_usftt')
+    exportToCSV(filteredCompetitors, exportHeaders, filename)
+
+    showToast({
+      title: 'Export réussi',
+      message: `${filteredCompetitors.length} joueur${filteredCompetitors.length > 1 ? 's' : ''} exporté${filteredCompetitors.length > 1 ? 's' : ''} dans ${filename}`,
+      variant: 'success',
+    })
+  }
 
   if (loading) {
     return (
@@ -227,10 +256,17 @@ export function ClassementPage() {
         </div>
       )}
 
-      {/* Player count */}
-      <div className="text-sm text-gray-600">
-        {filteredCompetitors.length} joueur{filteredCompetitors.length > 1 ? 's' : ''}
-        {!showInactive && ' (joueurs actifs uniquement)'}
+      {/* Player count and export */}
+      <div className="flex items-center justify-between gap-4 flex-wrap">
+        <div className="text-sm text-gray-600 dark:text-gray-400">
+          {filteredCompetitors.length} joueur{filteredCompetitors.length > 1 ? 's' : ''}
+          {!showInactive && ' (joueurs actifs uniquement)'}
+        </div>
+        <ExportButton
+          onClick={handleExport}
+          disabled={filteredCompetitors.length === 0}
+          size="sm"
+        />
       </div>
 
       {/* Responsive Table/Cards */}
