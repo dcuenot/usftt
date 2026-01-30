@@ -1,72 +1,73 @@
-import { useEffect, useRef, useState } from 'react'
-import { cn } from '@/utils/cn'
+import { useEffect, useState } from 'react'
 
 interface AnimatedNumberProps {
   value: number
   duration?: number
-  decimals?: number
   className?: string
-  prefix?: string
-  suffix?: string
+  format?: (n: number) => string
+  decimals?: number
 }
 
+/**
+ * AnimatedNumber component with smooth count-up animation
+ *
+ * Features:
+ * - Smooth easeOutExpo easing for natural deceleration
+ * - 60fps animation using requestAnimationFrame
+ * - Customizable duration and formatting
+ * - Automatic cleanup on unmount
+ *
+ * @example
+ * <AnimatedNumber value={1234} duration={1000} />
+ * <AnimatedNumber value={42.5} decimals={1} format={(n) => `${n}%`} />
+ */
 export function AnimatedNumber({
   value,
   duration = 1000,
+  className = '',
+  format = (n) => n.toString(),
   decimals = 0,
-  className,
-  prefix = '',
-  suffix = '',
 }: AnimatedNumberProps) {
   const [displayValue, setDisplayValue] = useState(0)
-  const frameRef = useRef<number>()
-  const startTimeRef = useRef<number>()
-  const startValueRef = useRef(0)
 
   useEffect(() => {
-    // Cancel any ongoing animation
-    if (frameRef.current) {
-      cancelAnimationFrame(frameRef.current)
-    }
-
-    // Reset start values
-    startTimeRef.current = undefined
-    startValueRef.current = displayValue
+    let startTime: number | null = null
+    let animationFrame: number
 
     const animate = (timestamp: number) => {
-      if (!startTimeRef.current) {
-        startTimeRef.current = timestamp
-      }
+      if (!startTime) startTime = timestamp
+      const progress = Math.min((timestamp - startTime) / duration, 1)
 
-      const progress = Math.min((timestamp - startTimeRef.current) / duration, 1)
+      // Easing function: easeOutExpo
+      // Starts fast, decelerates smoothly
+      const eased = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress)
 
-      // Easing function (ease-out)
-      const easeOut = 1 - Math.pow(1 - progress, 3)
+      // Calculate current value based on easing
+      const currentValue = eased * value
 
-      const currentValue = startValueRef.current + (value - startValueRef.current) * easeOut
-      setDisplayValue(currentValue)
+      // Round to specified decimals
+      const roundedValue = decimals > 0
+        ? Math.round(currentValue * Math.pow(10, decimals)) / Math.pow(10, decimals)
+        : Math.floor(currentValue)
 
+      setDisplayValue(roundedValue)
+
+      // Continue animation if not complete
       if (progress < 1) {
-        frameRef.current = requestAnimationFrame(animate)
+        animationFrame = requestAnimationFrame(animate)
       }
     }
 
-    frameRef.current = requestAnimationFrame(animate)
+    // Start animation
+    animationFrame = requestAnimationFrame(animate)
 
+    // Cleanup on unmount or value change
     return () => {
-      if (frameRef.current) {
-        cancelAnimationFrame(frameRef.current)
+      if (animationFrame) {
+        cancelAnimationFrame(animationFrame)
       }
     }
-  }, [value, duration, displayValue])
+  }, [value, duration, decimals])
 
-  const formattedValue = displayValue.toFixed(decimals)
-
-  return (
-    <span className={cn('tabular-nums', className)}>
-      {prefix}
-      {formattedValue}
-      {suffix}
-    </span>
-  )
+  return <span className={className}>{format(displayValue)}</span>
 }
