@@ -14,6 +14,7 @@ interface StatsCardProps {
   variant?: 'default' | 'primary' | 'success' | 'danger' | 'gradient' | 'featured'
   cardStyle?: 'default' | 'elevated' | 'glass'
   animate?: boolean
+  chart?: React.ReactNode
 }
 
 export function StatsCard({
@@ -25,6 +26,7 @@ export function StatsCard({
   variant = 'default',
   cardStyle = 'elevated',
   animate = true,
+  chart,
 }: StatsCardProps) {
   const variantClasses = {
     default: 'bg-white',
@@ -94,6 +96,12 @@ export function StatsCard({
           >
             {trend.label}
           </span>
+        </div>
+      )}
+
+      {chart && (
+        <div className="mt-4 pt-4 border-t border-gray-200">
+          {chart}
         </div>
       )}
     </div>
