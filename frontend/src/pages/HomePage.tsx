@@ -9,10 +9,13 @@ import { PlayerList } from '@/components/home/PlayerList'
 import { SearchInput } from '@/components/ui/SearchInput'
 import { Select } from '@/components/ui/Select'
 import { FilterPanel } from '@/components/ui/FilterPanel'
-import { FilterChip } from '@/components/ui/FilterChip'
+import { RangeSlider } from '@/components/ui/RangeSlider'
+import { FilterPresets, FilterPreset, presetIcons } from '@/components/home/FilterPresets'
+import { FilterSummary, ActiveFilter } from '@/components/home/FilterSummary'
 import { SkeletonCard } from '@/components/ui/SkeletonCard'
 import { SkeletonTable } from '@/components/ui/SkeletonTable'
 import { ErrorState } from '@/components/ui/ErrorState'
+import { Accordion } from '@/components/ui/Accordion'
 import { calculateDashboardStats } from '@/utils/statistics'
 import { useIsMobile } from '@/hooks/useMediaQuery'
 
@@ -21,6 +24,15 @@ export function HomePage() {
   const [categoryFilter, setCategoryFilter] = useState<string>('')
   const [searchTerm, setSearchTerm] = useState<string>('')
   const isMobile = useIsMobile()
+
+  // Point range filter
+  const pointRange = useMemo(() => {
+    if (competitors.length === 0) return [0, 3000] as [number, number]
+    const points = competitors.map(c => c.point)
+    return [Math.floor(Math.min(...points) / 100) * 100, Math.ceil(Math.max(...points) / 100) * 100] as [number, number]
+  }, [competitors])
+
+  const [pointFilter, setPointFilter] = useState<[number, number]>(pointRange)
 
   // Calculate dashboard statistics
   const stats = useMemo(() => {
@@ -39,6 +51,9 @@ export function HomePage() {
       // Category filter
       if (categoryFilter && c.cat !== categoryFilter) return false
 
+      // Point range filter
+      if (c.point < pointFilter[0] || c.point > pointFilter[1]) return false
+
       // Search filter (name)
       if (searchTerm) {
         const search = searchTerm.toLowerCase()
@@ -48,7 +63,109 @@ export function HomePage() {
 
       return true
     })
-  }, [competitors, categoryFilter, searchTerm])
+  }, [competitors, categoryFilter, searchTerm, pointFilter])
+
+  // Filter presets
+  const filterPresets: FilterPreset[] = useMemo(() => [
+    {
+      id: 'top10',
+      label: 'Top 10',
+      icon: <presetIcons.Trophy className="w-5 h-5" />,
+      description: 'Les 10 meilleurs joueurs',
+      apply: () => {
+        const sorted = [...competitors].sort((a, b) => b.point - a.point)
+        if (sorted.length > 0) {
+          setPointFilter([sorted[9]?.point || 0, sorted[0].point])
+        }
+        setCategoryFilter('')
+        setSearchTerm('')
+      },
+    },
+    {
+      id: 'mostActive',
+      label: 'Plus actifs',
+      icon: <presetIcons.TrendingUp className="w-5 h-5" />,
+      description: 'Joueurs avec le plus de matchs',
+      apply: () => {
+        const sorted = [...competitors].sort((a, b) => b.parties - a.parties)
+        if (sorted.length > 0) {
+          const threshold = sorted[Math.floor(sorted.length * 0.2)]?.parties || 5
+          const minPoints = Math.min(...competitors.filter(c => c.parties >= threshold).map(c => c.point))
+          setPointFilter([minPoints, pointRange[1]])
+        }
+        setCategoryFilter('')
+        setSearchTerm('')
+      },
+    },
+    {
+      id: 'bestProgress',
+      label: 'Meilleure prog.',
+      icon: <presetIcons.Sparkles className="w-5 h-5" />,
+      description: 'Meilleure progression mensuelle',
+      apply: () => {
+        const sorted = [...competitors].sort((a, b) => b.prg_m - a.prg_m)
+        if (sorted.length > 0) {
+          const threshold = sorted[Math.floor(sorted.length * 0.2)]?.prg_m || 10
+          const minPoints = Math.min(...competitors.filter(c => c.prg_m >= threshold).map(c => c.point))
+          setPointFilter([minPoints, pointRange[1]])
+        }
+        setCategoryFilter('')
+        setSearchTerm('')
+      },
+    },
+    {
+      id: 'all',
+      label: 'Tous',
+      icon: <presetIcons.Users className="w-5 h-5" />,
+      description: 'Réinitialiser tous les filtres',
+      apply: () => {
+        setCategoryFilter('')
+        setSearchTerm('')
+        setPointFilter(pointRange)
+      },
+    },
+  ], [competitors, pointRange])
+
+  // Active filters for summary
+  const activeFilters: ActiveFilter[] = useMemo(() => {
+    const filters: ActiveFilter[] = []
+
+    if (categoryFilter) {
+      filters.push({
+        key: 'category',
+        label: 'Catégorie',
+        value: categoryFilter,
+        onRemove: () => setCategoryFilter(''),
+      })
+    }
+
+    if (searchTerm) {
+      filters.push({
+        key: 'search',
+        label: 'Recherche',
+        value: searchTerm,
+        onRemove: () => setSearchTerm(''),
+      })
+    }
+
+    const isPointRangeFiltered = pointFilter[0] !== pointRange[0] || pointFilter[1] !== pointRange[1]
+    if (isPointRangeFiltered) {
+      filters.push({
+        key: 'points',
+        label: 'Points',
+        value: `${pointFilter[0]} - ${pointFilter[1]}`,
+        onRemove: () => setPointFilter(pointRange),
+      })
+    }
+
+    return filters
+  }, [categoryFilter, searchTerm, pointFilter, pointRange])
+
+  const clearAllFilters = () => {
+    setCategoryFilter('')
+    setSearchTerm('')
+    setPointFilter(pointRange)
+  }
 
   // Define table columns
   const columns = useMemo<ColumnDef<Competitor>[]>(
@@ -161,50 +278,68 @@ export function HomePage() {
       {/* Dashboard Stats */}
       <DashboardHeader stats={stats} />
 
+      {/* Filter Presets */}
+      <FilterPresets presets={filterPresets} />
+
       {/* Search & Filters */}
-      <FilterPanel>
-        <SearchInput
-          value={searchTerm}
-          onChange={setSearchTerm}
-          placeholder="Rechercher un joueur..."
-          className="flex-1 min-w-[200px]"
-        />
-
-        <Select
-          label="Catégorie"
-          id="categoryFilter"
-          value={categoryFilter}
-          onChange={(e) => setCategoryFilter(e.target.value)}
-          className="flex-1 min-w-[200px]"
-        >
-          <option value="">Toutes les catégories</option>
-          {categories.map((cat) => (
-            <option key={cat} value={cat}>
-              {cat}
-            </option>
-          ))}
-        </Select>
-      </FilterPanel>
-
-      {/* Active Filters */}
-      {(categoryFilter || searchTerm) && (
-        <div className="flex flex-wrap gap-2">
-          {categoryFilter && (
-            <FilterChip
-              label="Catégorie"
-              value={categoryFilter}
-              onRemove={() => setCategoryFilter('')}
-            />
-          )}
-          {searchTerm && (
-            <FilterChip
-              label="Recherche"
+      <Accordion
+        title={
+          <div className="flex items-center justify-between w-full">
+            <span className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+              Filtres avancés
+            </span>
+            {activeFilters.length > 0 && (
+              <span className="text-sm text-gray-600 dark:text-gray-400">
+                ({activeFilters.length} actif{activeFilters.length > 1 ? 's' : ''})
+              </span>
+            )}
+          </div>
+        }
+        defaultOpen={false}
+        className="mb-6"
+      >
+        <div className="space-y-4">
+          <FilterPanel>
+            <SearchInput
               value={searchTerm}
-              onRemove={() => setSearchTerm('')}
+              onChange={setSearchTerm}
+              placeholder="Rechercher un joueur..."
+              className="flex-1 min-w-[200px]"
             />
-          )}
+
+            <Select
+              label="Catégorie"
+              id="categoryFilter"
+              value={categoryFilter}
+              onChange={(e) => setCategoryFilter(e.target.value)}
+              className="flex-1 min-w-[200px]"
+            >
+              <option value="">Toutes les catégories</option>
+              {categories.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </Select>
+          </FilterPanel>
+
+          {/* Point Range Filter */}
+          <RangeSlider
+            min={pointRange[0]}
+            max={pointRange[1]}
+            value={pointFilter}
+            onChange={setPointFilter}
+            step={50}
+            label="Plage de points"
+          />
         </div>
-      )}
+      </Accordion>
+
+      {/* Active Filters Summary */}
+      <FilterSummary
+        filters={activeFilters}
+        onClearAll={clearAllFilters}
+      />
 
       {/* Players count */}
       <div className="text-sm text-gray-600">
