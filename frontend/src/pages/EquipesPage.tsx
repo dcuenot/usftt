@@ -71,30 +71,30 @@ export function EquipesPage() {
       <div className="inline-flex rounded-lg border border-gray-300 bg-white p-1 shadow-sm">
         <button
           onClick={() => setGenderFilter('all')}
-          className={`px-4 py-2 rounded-md font-medium text-sm transition-all duration-150 ${
+          className={`px-4 py-2 rounded-md font-medium text-sm transition-all ${
             genderFilter === 'all'
               ? 'bg-gray-500 text-white shadow-sm'
-              : 'text-gray-700 hover:bg-gray-50 active:bg-gray-100'
+              : 'text-gray-700 hover:bg-gray-50'
           }`}
         >
           Toutes
         </button>
         <button
           onClick={() => setGenderFilter('G')}
-          className={`px-4 py-2 rounded-md font-medium text-sm transition-all duration-150 ${
+          className={`px-4 py-2 rounded-md font-medium text-sm transition-all ${
             genderFilter === 'G'
               ? 'bg-blue-500 text-white shadow-sm'
-              : 'text-gray-700 hover:bg-gray-50 active:bg-gray-100'
+              : 'text-gray-700 hover:bg-gray-50'
           }`}
         >
           Masculines
         </button>
         <button
           onClick={() => setGenderFilter('F')}
-          className={`px-4 py-2 rounded-md font-medium text-sm transition-all duration-150 ${
+          className={`px-4 py-2 rounded-md font-medium text-sm transition-all ${
             genderFilter === 'F'
               ? 'bg-violet-500 text-white shadow-sm'
-              : 'text-gray-700 hover:bg-gray-50 active:bg-gray-100'
+              : 'text-gray-700 hover:bg-gray-50'
           }`}
         >
           Féminines
