@@ -4,6 +4,7 @@ import { ErrorBoundary } from './components/ErrorBoundary'
 import { Layout } from './components/layout/Layout'
 import { LoadingBar } from './components/ui/LoadingBar'
 import { ToastProvider } from './components/ui/Toast'
+import { ThemeProvider } from './contexts/ThemeContext'
 
 // Lazy load page components for code splitting
 const HomePage = lazy(() => import('./pages/HomePage').then(m => ({ default: m.HomePage })))
@@ -16,22 +17,24 @@ const basename = import.meta.env.BASE_URL.replace(/\/$/, '') || '/'
 
 function App() {
   return (
-    <ToastProvider>
-      <ErrorBoundary>
-        <BrowserRouter basename={basename}>
-          <Suspense fallback={<LoadingBar />}>
-            <Routes>
-              <Route path="/" element={<Layout />}>
-                <Route index element={<HomePage />} />
-                <Route path="classement" element={<ClassementPage />} />
-                <Route path="equipes" element={<EquipesPage />} />
-                <Route path="tests" element={<TestsPage />} />
-              </Route>
-            </Routes>
-          </Suspense>
-        </BrowserRouter>
-      </ErrorBoundary>
-    </ToastProvider>
+    <ThemeProvider defaultTheme="system">
+      <ToastProvider>
+        <ErrorBoundary>
+          <BrowserRouter basename={basename}>
+            <Suspense fallback={<LoadingBar />}>
+              <Routes>
+                <Route path="/" element={<Layout />}>
+                  <Route index element={<HomePage />} />
+                  <Route path="classement" element={<ClassementPage />} />
+                  <Route path="equipes" element={<EquipesPage />} />
+                  <Route path="tests" element={<TestsPage />} />
+                </Route>
+              </Routes>
+            </Suspense>
+          </BrowserRouter>
+        </ErrorBoundary>
+      </ToastProvider>
+    </ThemeProvider>
   )
 }
 
