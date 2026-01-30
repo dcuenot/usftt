@@ -62,39 +62,39 @@ export function EquipesPage() {
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div className="flex items-center justify-between">
-        <h1 className="mb-0">Résultats par équipes</h1>
+      <div>
+        <h1 className="mb-2">Résultats par équipes</h1>
         <LastUpdate lastModified={lastModified} loading={loading} variant="relative" />
       </div>
 
       {/* Gender Filter Buttons */}
-      <div className="flex flex-wrap gap-2">
+      <div className="inline-flex rounded-lg border border-gray-300 bg-white p-1 shadow-sm">
         <button
           onClick={() => setGenderFilter('all')}
-          className={`px-4 py-2 rounded font-medium transition-colors ${
+          className={`px-4 py-2 rounded-md font-medium text-sm transition-all ${
             genderFilter === 'all'
-              ? 'bg-primary text-white'
-              : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+              ? 'bg-gray-500 text-white shadow-sm'
+              : 'text-gray-700 hover:bg-gray-50'
           }`}
         >
           Toutes
         </button>
         <button
           onClick={() => setGenderFilter('G')}
-          className={`px-4 py-2 rounded font-medium transition-colors ${
+          className={`px-4 py-2 rounded-md font-medium text-sm transition-all ${
             genderFilter === 'G'
-              ? 'bg-primary text-white'
-              : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+              ? 'bg-blue-500 text-white shadow-sm'
+              : 'text-gray-700 hover:bg-gray-50'
           }`}
         >
           Masculines
         </button>
         <button
           onClick={() => setGenderFilter('F')}
-          className={`px-4 py-2 rounded font-medium transition-colors ${
+          className={`px-4 py-2 rounded-md font-medium text-sm transition-all ${
             genderFilter === 'F'
-              ? 'bg-primary text-white'
-              : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+              ? 'bg-violet-500 text-white shadow-sm'
+              : 'text-gray-700 hover:bg-gray-50'
           }`}
         >
           Féminines

@@ -115,13 +115,13 @@ test.describe('EquipesPage Dense Table View', () => {
     // Wait for table
     await page.waitForSelector('table')
 
-    // Check first row has division badge with blue or pink color
+    // Check first row has division badge with blue or violet color
     const firstRow = page.locator('tbody tr').first()
     const divisionBadge = firstRow.locator('span[class*="border"]').first()
     await expect(divisionBadge).toBeVisible()
 
     const badgeClass = await divisionBadge.getAttribute('class')
-    expect(badgeClass).toMatch(/blue|pink/)
+    expect(badgeClass).toMatch(/blue|violet/)
   })
 
   test('should display division badges with colors in mobile cards', async ({ page }) => {
@@ -137,7 +137,7 @@ test.describe('EquipesPage Dense Table View', () => {
     await expect(divisionBadge).toBeVisible()
 
     const badgeClass = await divisionBadge.getAttribute('class')
-    expect(badgeClass).toMatch(/blue|pink/)
+    expect(badgeClass).toMatch(/blue|violet/)
   })
 
   test('should display match results with proper styling', async ({ page }) => {
@@ -165,19 +165,19 @@ test.describe('EquipesPage Dense Table View', () => {
     await page.waitForLoadState('networkidle')
     await page.waitForSelector('[data-testid="compact-team-card"]')
 
-    // Check first card has stats grid
+    // Check first card has ranking and points in header
     const firstCard = page.locator('[data-testid="compact-team-card"]').first()
 
     // Check for rank badge
     const rankBadge = firstCard.locator('.rounded-full')
     await expect(rankBadge).toBeVisible()
 
-    // Check for stats labels (Pts, J, V, D)
+    // Check for points label (lowercase "pts" next to points value)
     const cardText = await firstCard.textContent()
-    expect(cardText).toContain('Pts') // Points
-    expect(cardText).toContain('J') // Joués
-    expect(cardText).toContain('V') // Victoires
-    expect(cardText).toContain('D') // Défaites
+    expect(cardText).toContain('pts') // Points label
+
+    // Check for tour results grid (J1, J2, etc.)
+    expect(cardText).toMatch(/J\d/) // Tour labels like J1, J2, etc.
   })
 
   test('should display sortable columns in desktop table', async ({ page }) => {

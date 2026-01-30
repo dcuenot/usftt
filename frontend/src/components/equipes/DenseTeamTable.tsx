@@ -16,7 +16,7 @@ function getDivisionColor(gender: string): string {
   if (gender === 'G') {
     return 'bg-blue-100 text-blue-800 border-blue-300'
   } else {
-    return 'bg-pink-100 text-pink-800 border-pink-300'
+    return 'bg-violet-100 text-violet-800 border-violet-300'
   }
 }
 
