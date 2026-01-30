@@ -219,7 +219,7 @@ export function ClassementPage() {
         <div className="flex items-end">
           <button
             onClick={() => setShowInactive(!showInactive)}
-            className="border border-gray-300 rounded px-4 py-2 bg-white hover:bg-gray-50 transition-colors flex items-center gap-2 whitespace-nowrap"
+            className="border border-gray-300 rounded px-4 py-2.5 md:py-2 bg-white hover:bg-gray-50 transition-colors flex items-center gap-2 whitespace-nowrap min-h-[44px] md:min-h-0"
           >
             {showInactive ? (
               <>

@@ -33,8 +33,9 @@ export function Select({
           className={cn(
             'w-full appearance-none',
             'rounded-lg border bg-white',
-            'px-4 py-2.5 pr-10',
+            'px-4 py-3 md:py-2.5 pr-10',
             'text-sm text-gray-900',
+            'min-h-[44px] md:min-h-0',
             'transition-all duration-200',
             'focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent',
             'disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed',
