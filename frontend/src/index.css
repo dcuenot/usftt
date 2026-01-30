@@ -127,6 +127,108 @@
     @apply transition-colors duration-200;
   }
 
+  /* ===== Micro-interactions ===== */
+
+  /* Button Interactions */
+  .btn-primary {
+    @apply px-4 py-2 rounded-lg bg-primary text-white font-medium;
+    transition: all 150ms ease-out;
+  }
+
+  .btn-primary:hover {
+    @apply bg-primary-600;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 102, 204, 0.2);
+  }
+
+  .btn-primary:active {
+    transform: translateY(0px);
+    box-shadow: 0 2px 4px rgba(0, 102, 204, 0.2);
+  }
+
+  .btn-secondary {
+    @apply px-4 py-2 rounded-lg bg-gray-200 text-gray-900 font-medium;
+    transition: all 150ms ease-out;
+  }
+
+  .btn-secondary:hover {
+    @apply bg-gray-300;
+    transform: translateY(-1px);
+  }
+
+  .btn-secondary:active {
+    transform: translateY(0px);
+  }
+
+  .btn-ghost {
+    @apply px-4 py-2 rounded-lg text-gray-700 font-medium;
+    transition: all 150ms ease-out;
+  }
+
+  .btn-ghost:hover {
+    @apply bg-gray-100;
+  }
+
+  .btn-ghost:active {
+    @apply bg-gray-200;
+  }
+
+  /* Enhanced Input Focus Animations */
+  input:focus,
+  textarea:focus,
+  select:focus {
+    transition: all 200ms ease-out;
+    transform: scale(1.01);
+  }
+
+  input,
+  textarea,
+  select {
+    transition: all 200ms ease-out;
+  }
+
+  /* Ripple Effect Container */
+  .ripple-container {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ripple-effect {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.6);
+    transform: scale(0);
+    animation: ripple 600ms ease-out;
+    pointer-events: none;
+  }
+
+  /* Interactive Element Hover States */
+  .interactive-lift {
+    transition: transform 150ms ease-out;
+  }
+
+  .interactive-lift:hover {
+    transform: translateY(-2px);
+  }
+
+  .interactive-lift:active {
+    transform: translateY(0px);
+  }
+
+  /* Icon Button Animation */
+  .icon-btn {
+    @apply p-2 rounded-lg transition-all duration-150;
+  }
+
+  .icon-btn:hover {
+    @apply bg-gray-100;
+    transform: scale(1.1);
+  }
+
+  .icon-btn:active {
+    transform: scale(0.95);
+  }
+
   /* Gradient Backgrounds */
   .bg-gradient-primary {
     background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
@@ -198,6 +300,31 @@
     }
   }
 
+  @keyframes ripple {
+    to {
+      transform: scale(4);
+      opacity: 0;
+    }
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  @keyframes bounce-subtle {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-4px);
+    }
+  }
+
   /* Animation classes */
   .animate-shimmer {
     animation: shimmer 2s infinite linear;
@@ -221,5 +348,41 @@
 
   .animate-spin-slow {
     animation: spin 2s linear infinite;
+  }
+
+  .animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .animate-bounce-subtle {
+    animation: bounce-subtle 1s ease-in-out infinite;
+  }
+
+  /* Loading Spinner */
+  .loading-spinner {
+    @apply inline-block w-5 h-5 border-2 border-gray-300 border-t-primary rounded-full;
+    animation: spin 1s linear infinite;
+  }
+
+  .loading-dots {
+    display: inline-flex;
+    gap: 4px;
+  }
+
+  .loading-dots span {
+    @apply w-2 h-2 bg-gray-400 rounded-full;
+    animation: pulse 1.4s ease-in-out infinite;
+  }
+
+  .loading-dots span:nth-child(1) {
+    animation-delay: 0s;
+  }
+
+  .loading-dots span:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+
+  .loading-dots span:nth-child(3) {
+    animation-delay: 0.4s;
   }
 }

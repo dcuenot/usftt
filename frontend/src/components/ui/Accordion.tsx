@@ -29,7 +29,7 @@ export function Accordion({
     <div className={cn('border border-gray-200 rounded-lg overflow-hidden', className)} data-testid="accordion">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors"
+        className="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 active:bg-gray-100 transition-all duration-150"
         aria-expanded={isOpen}
       >
         {triggerContent}
