@@ -4,7 +4,9 @@
 
 @layer base {
   body {
-    @apply antialiased text-gray-900 bg-neutral-50;
+    @apply antialiased text-gray-900;
+    background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+    background-attachment: fixed;
   }
 
   /* Typography Scale */
@@ -68,6 +70,36 @@
   a,
   button {
     @apply transition-colors duration-200;
+  }
+
+  /* Gradient Backgrounds */
+  .bg-gradient-primary {
+    background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
+  }
+
+  .bg-gradient-card {
+    background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+  }
+
+  .bg-gradient-page {
+    background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+  }
+
+  /* Gradient Text */
+  .text-gradient-primary {
+    background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Hover Glow Effects */
+  .hover-glow-primary {
+    transition: box-shadow 200ms ease-out;
+  }
+
+  .hover-glow-primary:hover {
+    box-shadow: 0 0 20px rgba(0, 102, 204, 0.3);
   }
 }
 
