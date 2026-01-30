@@ -58,16 +58,16 @@ test.describe('Navigation', () => {
   test('should highlight active page in navigation', async ({ page }) => {
     await page.goto('/')
 
-    // Home link should be active
+    // Home link should be active (desktop has bg-primary, mobile has text-primary)
     const homeLink = page.getByRole('link', { name: /Accueil/i })
-    await expect(homeLink).toHaveClass(/text-primary|font-semibold/)
+    await expect(homeLink).toHaveClass(/text-primary|font-semibold|bg-primary/)
 
     // Navigate to Classement
     await page.getByRole('link', { name: /Classement/i }).click()
 
-    // Classement link should now be active
+    // Classement link should now be active (desktop has bg-primary, mobile has text-primary)
     const classementLink = page.getByRole('link', { name: /Classement/i })
-    await expect(classementLink).toHaveClass(/text-primary|font-semibold/)
+    await expect(classementLink).toHaveClass(/text-primary|font-semibold|bg-primary/)
   })
 
   test('should maintain navigation state on page refresh', async ({ page }) => {
