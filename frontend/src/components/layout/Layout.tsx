@@ -2,6 +2,7 @@ import { Outlet } from 'react-router-dom'
 import { Navbar } from './Navbar'
 import { MobileNav } from './MobileNav'
 import { PageTransition } from '../PageTransition'
+import { InstallPrompt } from '../ui/InstallPrompt'
 
 export function Layout() {
   return (
@@ -13,6 +14,7 @@ export function Layout() {
         </PageTransition>
       </main>
       <MobileNav />
+      <InstallPrompt />
     </div>
   )
 }
