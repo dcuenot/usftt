@@ -9,8 +9,21 @@ export function Navbar() {
     <nav className="bg-gray-100 mb-4 hidden lg:block">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          <Link to="/" className="text-xl font-semibold">
-            USFTT
+          <Link to="/" className="flex items-center gap-3 group">
+            <img
+              src="/usftt/logo/usftt-logo.png"
+              alt="USFTT Logo"
+              className="h-10 w-auto transition-transform group-hover:scale-105"
+              onError={(e) => {
+                // Fallback to text if logo doesn't exist
+                e.currentTarget.style.display = 'none'
+                const textFallback = e.currentTarget.nextElementSibling
+                if (textFallback) {
+                  textFallback.classList.remove('hidden')
+                }
+              }}
+            />
+            <span className="text-xl font-semibold text-gray-900 hidden">USFTT</span>
           </Link>
           <div className="flex space-x-4">
             <Link
