@@ -115,13 +115,13 @@ test.describe('EquipesPage Dense Table View', () => {
     // Wait for table
     await page.waitForSelector('table')
 
-    // Check first row has division badge with blue or pink color
+    // Check first row has division badge with blue or violet color
     const firstRow = page.locator('tbody tr').first()
     const divisionBadge = firstRow.locator('span[class*="border"]').first()
     await expect(divisionBadge).toBeVisible()
 
     const badgeClass = await divisionBadge.getAttribute('class')
-    expect(badgeClass).toMatch(/blue|pink/)
+    expect(badgeClass).toMatch(/blue|violet/)
   })
 
   test('should display division badges with colors in mobile cards', async ({ page }) => {
@@ -137,7 +137,7 @@ test.describe('EquipesPage Dense Table View', () => {
     await expect(divisionBadge).toBeVisible()
 
     const badgeClass = await divisionBadge.getAttribute('class')
-    expect(badgeClass).toMatch(/blue|pink/)
+    expect(badgeClass).toMatch(/blue|violet/)
   })
 
   test('should display match results with proper styling', async ({ page }) => {

@@ -13,7 +13,7 @@ function getDivisionColor(gender: string): string {
   if (gender === 'G') {
     return 'bg-blue-100 text-blue-800 border-blue-300'
   } else {
-    return 'bg-pink-100 text-pink-800 border-pink-300'
+    return 'bg-violet-100 text-violet-800 border-violet-300'
   }
 }
 
@@ -64,48 +64,26 @@ export function CompactTeamCard({ team, tours }: CompactTeamCardProps) {
               {team.name}
             </span>
           </div>
-          <span className={cn(
-            'inline-flex items-center justify-center w-8 h-8 rounded-full text-xs font-bold flex-shrink-0 ml-2',
-            team.ranking.rang === 1 ? 'bg-yellow-100 text-yellow-800' :
-            team.ranking.rang === 2 ? 'bg-gray-200 text-gray-700' :
-            team.ranking.rang === 3 ? 'bg-orange-100 text-orange-700' :
-            'bg-gray-100 text-gray-600'
-          )}>
-            {team.ranking.rang}
-          </span>
+          <div className="flex items-center gap-2 flex-shrink-0 ml-2">
+            <span className={cn(
+              'inline-flex items-center justify-center w-8 h-8 rounded-full text-xs font-bold',
+              team.ranking.rang === 1 ? 'bg-yellow-100 text-yellow-800' :
+              team.ranking.rang === 2 ? 'bg-gray-200 text-gray-700' :
+              team.ranking.rang === 3 ? 'bg-orange-100 text-orange-700' :
+              'bg-gray-100 text-gray-600'
+            )}>
+              {team.ranking.rang}
+            </span>
+            <span className="text-lg font-bold text-gray-900">
+              {team.ranking.points} <span className="text-xs font-normal text-gray-500">pts</span>
+            </span>
+          </div>
         </div>
       </div>
 
-      {/* Stats Grid */}
-      <div className="px-4 py-3 grid grid-cols-4 gap-2">
-        {/* Points */}
-        <div className="text-center">
-          <div className="text-lg font-bold text-gray-900">{team.ranking.points}</div>
-          <div className="text-xs text-gray-500">Pts</div>
-        </div>
-
-        {/* Joués */}
-        <div className="text-center">
-          <div className="text-lg font-bold text-gray-900">{team.ranking.joues}</div>
-          <div className="text-xs text-gray-500">J</div>
-        </div>
-
-        {/* Victoires */}
-        <div className="text-center">
-          <div className="text-lg font-bold text-victory">{team.ranking.victoires}</div>
-          <div className="text-xs text-gray-500">V</div>
-        </div>
-
-        {/* Défaites */}
-        <div className="text-center">
-          <div className="text-lg font-bold text-defeat">{team.ranking.defaites}</div>
-          <div className="text-xs text-gray-500">D</div>
-        </div>
-      </div>
-
-      {/* Tour Results - Horizontal Scroll */}
-      <div className="px-4 py-3 border-t border-gray-200 bg-gray-50">
-        <div className="flex gap-2 overflow-x-auto snap-x snap-mandatory pb-1 -mx-4 px-4" style={{ scrollbarWidth: 'thin' }}>
+      {/* Tour Results - Compact Grid */}
+      <div className="px-2 py-2 border-t border-gray-200 bg-gray-50">
+        <div className="grid grid-cols-7 gap-1">
           {tours.map((tour) => {
             const result = getMatchResult(team, tour)
 
@@ -113,7 +91,7 @@ export function CompactTeamCard({ team, tours }: CompactTeamCardProps) {
               <div
                 key={tour}
                 className={cn(
-                  'flex-shrink-0 snap-start rounded border px-3 py-2 min-w-[100px]',
+                  'rounded border p-1.5 flex flex-col items-center justify-center',
                   result.bgColor,
                   result.color === 'text-gray-400' ? 'border-gray-300' :
                   result.color === 'text-victory' ? 'border-victory' :
@@ -121,24 +99,18 @@ export function CompactTeamCard({ team, tours }: CompactTeamCardProps) {
                   'border-draw'
                 )}
               >
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-xs font-medium text-gray-700">J{tour}</span>
-                  <span className={cn('text-lg font-bold', result.color)}>
-                    {result.icon}
-                  </span>
+                <div className="text-[10px] font-medium text-gray-600 leading-tight mb-0.5">
+                  J{tour}
                 </div>
-                <div className="text-sm font-semibold text-gray-900 mt-0.5">
-                  {result.score}
-                </div>
+                {result.score && (
+                  <div className="text-[10px] font-semibold text-gray-900 leading-tight mt-0.5 whitespace-nowrap">
+                    {result.score}
+                  </div>
+                )}
               </div>
             )
           })}
         </div>
-        {tours.length > 3 && (
-          <div className="text-xs text-gray-500 text-center mt-2">
-            ← Faites défiler →
-          </div>
-        )}
       </div>
     </div>
   )
