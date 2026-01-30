@@ -1,5 +1,6 @@
 import { cn } from '@/utils/cn'
 import { TrendingUp, TrendingDown } from 'lucide-react'
+import { AnimatedNumber } from './AnimatedNumber'
 
 interface StatsCardProps {
   title: string
@@ -12,6 +13,7 @@ interface StatsCardProps {
   }
   variant?: 'default' | 'primary' | 'success' | 'danger' | 'gradient' | 'featured'
   cardStyle?: 'default' | 'elevated' | 'glass'
+  animate?: boolean
 }
 
 export function StatsCard({
@@ -22,6 +24,7 @@ export function StatsCard({
   trend,
   variant = 'default',
   cardStyle = 'elevated',
+  animate = true,
 }: StatsCardProps) {
   const variantClasses = {
     default: 'bg-white',
@@ -62,7 +65,11 @@ export function StatsCard({
 
       <div className="mb-2">
         <p className="text-4xl font-bold text-gray-900 text-numeric">
-          {value}
+          {animate && typeof value === 'number' ? (
+            <AnimatedNumber value={value} duration={1200} />
+          ) : (
+            value
+          )}
         </p>
       </div>
 
