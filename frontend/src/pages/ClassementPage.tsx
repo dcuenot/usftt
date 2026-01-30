@@ -6,6 +6,8 @@ import { ProgressionBadge } from '@/components/shared/ProgressionBadge'
 import { GenderIcon } from '@/components/shared/GenderIcon'
 import { LastUpdate } from '@/components/shared/LastUpdate'
 import { FilterPanel } from '@/components/ui/FilterPanel'
+import { Select } from '@/components/ui/Select'
+import { FilterChip } from '@/components/ui/FilterChip'
 import { PlayerRankingCard } from '@/components/classement/PlayerRankingCard'
 import { SkeletonCard } from '@/components/ui/SkeletonCard'
 import { SkeletonTable } from '@/components/ui/SkeletonTable'
@@ -152,41 +154,33 @@ export function ClassementPage() {
       {/* Filters */}
       <FilterPanel>
         {/* Gender Filter */}
-        <div className="flex-1 min-w-[150px]">
-          <label htmlFor="genderFilter" className="block text-sm font-medium text-gray-700 mb-2">
-            Sexe
-          </label>
-          <select
-            id="genderFilter"
-            value={genderFilter}
-            onChange={(e) => setGenderFilter(e.target.value as '' | 'M' | 'F')}
-            className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-          >
-            <option value="">Tous</option>
-            <option value="M">Masculin</option>
-            <option value="F">Féminin</option>
-          </select>
-        </div>
+        <Select
+          label="Sexe"
+          id="genderFilter"
+          value={genderFilter}
+          onChange={(e) => setGenderFilter(e.target.value as '' | 'M' | 'F')}
+          className="flex-1 min-w-[150px]"
+        >
+          <option value="">Tous</option>
+          <option value="M">Masculin</option>
+          <option value="F">Féminin</option>
+        </Select>
 
         {/* Category Filter */}
-        <div className="flex-1 min-w-[150px]">
-          <label htmlFor="categoryFilter" className="block text-sm font-medium text-gray-700 mb-2">
-            Catégorie
-          </label>
-          <select
-            id="categoryFilter"
-            value={categoryFilter}
-            onChange={(e) => setCategoryFilter(e.target.value)}
-            className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-          >
-            <option value="">Toutes</option>
-            {categories.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat}
-              </option>
-            ))}
-          </select>
-        </div>
+        <Select
+          label="Catégorie"
+          id="categoryFilter"
+          value={categoryFilter}
+          onChange={(e) => setCategoryFilter(e.target.value)}
+          className="flex-1 min-w-[150px]"
+        >
+          <option value="">Toutes</option>
+          {categories.map((cat) => (
+            <option key={cat} value={cat}>
+              {cat}
+            </option>
+          ))}
+        </Select>
 
         {/* Toggle Inactive */}
         <div className="flex items-end">
@@ -208,6 +202,26 @@ export function ClassementPage() {
           </button>
         </div>
       </FilterPanel>
+
+      {/* Active Filters */}
+      {(genderFilter || categoryFilter) && (
+        <div className="flex flex-wrap gap-2">
+          {genderFilter && (
+            <FilterChip
+              label="Sexe"
+              value={genderFilter === 'M' ? 'Masculin' : 'Féminin'}
+              onRemove={() => setGenderFilter('')}
+            />
+          )}
+          {categoryFilter && (
+            <FilterChip
+              label="Catégorie"
+              value={categoryFilter}
+              onRemove={() => setCategoryFilter('')}
+            />
+          )}
+        </div>
+      )}
 
       {/* Player count */}
       <div className="text-sm text-gray-600">

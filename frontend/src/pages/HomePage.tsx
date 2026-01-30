@@ -7,7 +7,9 @@ import { LastUpdate } from '@/components/shared/LastUpdate'
 import { DashboardHeader } from '@/components/home/DashboardHeader'
 import { PlayerList } from '@/components/home/PlayerList'
 import { SearchInput } from '@/components/ui/SearchInput'
+import { Select } from '@/components/ui/Select'
 import { FilterPanel } from '@/components/ui/FilterPanel'
+import { FilterChip } from '@/components/ui/FilterChip'
 import { SkeletonCard } from '@/components/ui/SkeletonCard'
 import { SkeletonTable } from '@/components/ui/SkeletonTable'
 import { calculateDashboardStats } from '@/utils/statistics'
@@ -164,25 +166,41 @@ export function HomePage() {
           className="flex-1 min-w-[200px]"
         />
 
-        <div className="flex-1 min-w-[200px]">
-          <label htmlFor="categoryFilter" className="block text-sm font-medium text-gray-700 mb-2">
-            Catégorie
-          </label>
-          <select
-            id="categoryFilter"
-            value={categoryFilter}
-            onChange={(e) => setCategoryFilter(e.target.value)}
-            className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-          >
-            <option value="">Toutes les catégories</option>
-            {categories.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat}
-              </option>
-            ))}
-          </select>
-        </div>
+        <Select
+          label="Catégorie"
+          id="categoryFilter"
+          value={categoryFilter}
+          onChange={(e) => setCategoryFilter(e.target.value)}
+          className="flex-1 min-w-[200px]"
+        >
+          <option value="">Toutes les catégories</option>
+          {categories.map((cat) => (
+            <option key={cat} value={cat}>
+              {cat}
+            </option>
+          ))}
+        </Select>
       </FilterPanel>
+
+      {/* Active Filters */}
+      {(categoryFilter || searchTerm) && (
+        <div className="flex flex-wrap gap-2">
+          {categoryFilter && (
+            <FilterChip
+              label="Catégorie"
+              value={categoryFilter}
+              onRemove={() => setCategoryFilter('')}
+            />
+          )}
+          {searchTerm && (
+            <FilterChip
+              label="Recherche"
+              value={searchTerm}
+              onRemove={() => setSearchTerm('')}
+            />
+          )}
+        </div>
+      )}
 
       {/* Players count */}
       <div className="text-sm text-gray-600">
