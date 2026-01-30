@@ -31,7 +31,7 @@ export function MatchResultList({ matches, tourNumbers }: MatchResultListProps) 
           return (
             <div
               key={tour}
-              className="bg-gray-50 rounded-lg p-4 text-center text-gray-400"
+              className="bg-gray-50 rounded-lg p-4 text-center text-gray-600"
             >
               <span className="text-sm font-medium">Tour {tour}</span>
               <p className="text-sm mt-1">Match non programmé</p>
