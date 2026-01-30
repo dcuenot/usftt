@@ -88,6 +88,11 @@ export default {
         'gradient-stats-orange': 'linear-gradient(135deg, #fed7aa 0%, #fdba74 100%)',
         'gradient-stats-purple': 'linear-gradient(135deg, #e9d5ff 0%, #d8b4fe 100%)',
       },
+      fontFamily: {
+        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        display: ['Inter', 'SF Pro Display', '-apple-system', 'sans-serif'],
+        mono: ['SF Mono', 'Monaco', 'Consolas', 'monospace'],
+      },
       fontSize: {
         xs: ['0.75rem', { lineHeight: '1rem' }],
         sm: ['0.875rem', { lineHeight: '1.25rem' }],
@@ -97,6 +102,12 @@ export default {
         '2xl': ['1.5rem', { lineHeight: '2rem' }],
         '3xl': ['1.875rem', { lineHeight: '2.25rem' }],
         '4xl': ['2.25rem', { lineHeight: '2.5rem' }],
+        '5xl': ['2.5rem', { lineHeight: '1.2', letterSpacing: '-0.01em' }],
+        'display': ['3rem', { lineHeight: '1.1', letterSpacing: '-0.02em' }],
+      },
+      letterSpacing: {
+        tighter: '-0.02em',
+        tight: '-0.01em',
       },
       spacing: {
         '18': '4.5rem',
