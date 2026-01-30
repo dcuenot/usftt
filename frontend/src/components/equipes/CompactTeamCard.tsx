@@ -50,7 +50,7 @@ function getMatchResult(team: Team, tour: string): { icon: string | ReactNode; c
 export function CompactTeamCard({ team, tours }: CompactTeamCardProps) {
   return (
     <div
-      className="bg-white rounded-card shadow-card hover:shadow-card-hover transition-all overflow-hidden"
+      className="card-elevated overflow-hidden"
       data-testid="compact-team-card"
     >
       {/* Header */}

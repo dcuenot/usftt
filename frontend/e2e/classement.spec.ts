@@ -136,7 +136,10 @@ test.describe('ClassementPage Responsive', () => {
     await expect(details).toBeVisible()
   })
 
-  test('should sort by points in descending order by default', async ({ page }) => {
+  test('should sort by points in descending order by default', async ({ page }, testInfo) => {
+    // Skip on mobile - table is not displayed on mobile view
+    test.skip(testInfo.project.name === 'mobile', 'Table sorting test only applicable for desktop/tablet')
+
     await page.goto('/classement')
 
     // Wait for table to load (desktop view)

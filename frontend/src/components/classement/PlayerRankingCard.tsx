@@ -11,7 +11,7 @@ interface PlayerRankingCardProps {
 export function PlayerRankingCard({ competitor, rank }: PlayerRankingCardProps) {
   return (
     <div
-      className="bg-white rounded-card shadow-card hover:shadow-card-hover transition-shadow"
+      className="card-elevated"
       data-testid="player-ranking-card"
     >
       {/* Main Card Content */}

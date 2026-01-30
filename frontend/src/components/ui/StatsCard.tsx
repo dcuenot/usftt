@@ -10,7 +10,8 @@ interface StatsCardProps {
     value: number
     label: string
   }
-  variant?: 'default' | 'primary' | 'success' | 'danger'
+  variant?: 'default' | 'primary' | 'success' | 'danger' | 'gradient' | 'featured'
+  cardStyle?: 'default' | 'elevated' | 'glass'
 }
 
 export function StatsCard({
@@ -20,55 +21,74 @@ export function StatsCard({
   icon,
   trend,
   variant = 'default',
+  cardStyle = 'elevated',
 }: StatsCardProps) {
   const variantClasses = {
-    default: 'bg-white border-gray-200',
-    primary: 'bg-primary-50 border-primary-200',
-    success: 'bg-victory-light border-victory',
-    danger: 'bg-defeat-light border-defeat',
+    default: 'bg-white',
+    primary: 'bg-primary-50',
+    success: 'bg-victory-light',
+    danger: 'bg-defeat-light',
+    gradient: 'bg-gradient-card',
+    featured: '',
   }
+
+  const cardStyleClasses = {
+    default: 'rounded-card shadow-card transition-shadow hover:shadow-card-hover',
+    elevated: 'card-elevated',
+    glass: 'card-glass',
+  }
+
+  const baseClass = variant === 'featured' ? 'card-featured' : cardStyleClasses[cardStyle]
 
   return (
     <div
       className={cn(
-        'rounded-card shadow-card p-6 border transition-shadow hover:shadow-card-hover',
-        variantClasses[variant]
+        'p-6 group',
+        baseClass,
+        variant !== 'featured' && variantClasses[variant]
       )}
       data-testid="stats-card"
     >
-      <div className="flex items-start justify-between">
-        <div className="flex-1">
-          <p className="text-sm font-medium text-gray-600 mb-1">{title}</p>
-          <p className="text-3xl font-bold text-gray-900 mb-1">{value}</p>
-          {subtitle && (
-            <p className="text-sm text-gray-500">{subtitle}</p>
-          )}
-          {trend && (
-            <div className="flex items-center gap-1 mt-2">
-              {trend.value > 0 ? (
-                <TrendingUp className="w-4 h-4 text-victory" />
-              ) : trend.value < 0 ? (
-                <TrendingDown className="w-4 h-4 text-defeat" />
-              ) : null}
-              <span
-                className={cn(
-                  'text-sm font-medium',
-                  trend.value > 0 && 'text-victory',
-                  trend.value < 0 && 'text-defeat',
-                  trend.value === 0 && 'text-gray-600'
-                )}
-              >
-                {trend.label}
-              </span>
-            </div>
-          )}
-        </div>
+      <div className="flex items-center justify-between mb-4">
+        <p className="text-sm font-medium text-gray-600 uppercase tracking-wide">
+          {title}
+        </p>
         {icon && (
-          <div className="text-gray-400 opacity-50">
+          <div className="text-primary-500 transition-transform group-hover:scale-110 group-hover:rotate-3">
             {icon}
           </div>
         )}
       </div>
+
+      <div className="mb-2">
+        <p className="text-4xl font-bold text-gray-900 text-numeric">
+          {value}
+        </p>
+      </div>
+
+      {subtitle && (
+        <p className="text-sm text-gray-500 mb-2">{subtitle}</p>
+      )}
+
+      {trend && (
+        <div className="flex items-center gap-2">
+          {trend.value > 0 ? (
+            <TrendingUp className="w-4 h-4 text-victory" />
+          ) : trend.value < 0 ? (
+            <TrendingDown className="w-4 h-4 text-defeat" />
+          ) : null}
+          <span
+            className={cn(
+              'text-sm font-medium',
+              trend.value > 0 && 'text-victory',
+              trend.value < 0 && 'text-defeat',
+              trend.value === 0 && 'text-gray-600'
+            )}
+          >
+            {trend.label}
+          </span>
+        </div>
+      )}
     </div>
   )
 }
