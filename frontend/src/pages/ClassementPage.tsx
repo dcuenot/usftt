@@ -11,6 +11,7 @@ import { FilterChip } from '@/components/ui/FilterChip'
 import { PlayerRankingCard } from '@/components/classement/PlayerRankingCard'
 import { SkeletonCard } from '@/components/ui/SkeletonCard'
 import { SkeletonTable } from '@/components/ui/SkeletonTable'
+import { ErrorState } from '@/components/ui/ErrorState'
 import { Eye, EyeOff } from 'lucide-react'
 import { useIsMobile } from '@/hooks/useMediaQuery'
 
@@ -135,10 +136,13 @@ export function ClassementPage() {
     return (
       <div>
         <h1>Classement individuel</h1>
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-          <p className="font-semibold">Erreur de chargement</p>
-          <p className="text-sm">{error.message}</p>
-        </div>
+        <ErrorState
+          title="Erreur de chargement"
+          message="Impossible de charger le classement. Veuillez réessayer."
+          error={error}
+          onRetry={() => window.location.reload()}
+          variant="compact"
+        />
       </div>
     )
   }
