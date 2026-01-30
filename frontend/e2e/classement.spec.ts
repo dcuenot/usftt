@@ -136,25 +136,6 @@ test.describe('ClassementPage Responsive', () => {
     await expect(details).toBeVisible()
   })
 
-  test('should sort by points in descending order by default', async ({ page }, testInfo) => {
-    // Skip on mobile - table is not displayed on mobile view
-    test.skip(testInfo.project.name === 'mobile', 'Table sorting test only applicable for desktop/tablet')
-
-    await page.goto('/classement')
-
-    // Wait for table to load (desktop view)
-    await page.waitForSelector('table tbody tr', { timeout: 10000 })
-
-    // Get first few rows and check points are descending
-    const firstRowPoints = await page.locator('table tbody tr:first-child td:nth-child(4)').textContent()
-    const secondRowPoints = await page.locator('table tbody tr:nth-child(2) td:nth-child(4)').textContent()
-
-    const points1 = parseInt(firstRowPoints?.replace(/\D/g, '') || '0')
-    const points2 = parseInt(secondRowPoints?.replace(/\D/g, '') || '0')
-
-    expect(points1).toBeGreaterThanOrEqual(points2)
-  })
-
   test('should display rank number on mobile cards', async ({ page }) => {
     // Set mobile viewport
     await page.setViewportSize({ width: 375, height: 667 })
@@ -247,5 +228,26 @@ test.describe('ClassementPage Responsive', () => {
     const firstCard = page.locator('[data-testid="player-ranking-card"]').first()
     const categoryBadge = firstCard.locator('span[class*="bg-gray-100"]')
     await expect(categoryBadge.first()).toBeVisible()
+  })
+})
+
+// Desktop/Tablet-only tests (table-specific features)
+test.describe('ClassementPage Table Features', () => {
+  test.use({ viewport: { width: 1920, height: 1080 } })
+
+  test('should sort by points in descending order by default', async ({ page }) => {
+    await page.goto('/classement')
+
+    // Wait for table to load
+    await page.waitForSelector('table tbody tr', { timeout: 10000 })
+
+    // Get first few rows and check points are descending
+    const firstRowPoints = await page.locator('table tbody tr:first-child td:nth-child(4)').textContent()
+    const secondRowPoints = await page.locator('table tbody tr:nth-child(2) td:nth-child(4)').textContent()
+
+    const points1 = parseInt(firstRowPoints?.replace(/\D/g, '') || '0')
+    const points2 = parseInt(secondRowPoints?.replace(/\D/g, '') || '0')
+
+    expect(points1).toBeGreaterThanOrEqual(points2)
   })
 })
