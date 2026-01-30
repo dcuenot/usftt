@@ -3,6 +3,7 @@ import { useTeamData } from '@/hooks/useTeamData'
 import { LastUpdate } from '@/components/shared/LastUpdate'
 import { DenseTeamsView } from '@/components/equipes/DenseTeamsView'
 import { SkeletonCard } from '@/components/ui/SkeletonCard'
+import { ErrorState } from '@/components/ui/ErrorState'
 
 export function EquipesPage() {
   const { teams, loading, error, lastModified } = useTeamData()
@@ -51,10 +52,13 @@ export function EquipesPage() {
     return (
       <div>
         <h1>Résultats par équipes</h1>
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-          <p className="font-semibold">Erreur de chargement</p>
-          <p className="text-sm">{error.message}</p>
-        </div>
+        <ErrorState
+          title="Erreur de chargement"
+          message="Impossible de charger les résultats des équipes. Veuillez réessayer."
+          error={error}
+          onRetry={() => window.location.reload()}
+          variant="compact"
+        />
       </div>
     )
   }
