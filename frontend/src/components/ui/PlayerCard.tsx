@@ -1,6 +1,8 @@
 import { Competitor } from '@/types/competitor.types'
 import { GenderIcon } from '@/components/shared/GenderIcon'
 import { ProgressionBadge } from '@/components/shared/ProgressionBadge'
+import { TableTennisIcon } from '@/components/shared/TableTennisIcon'
+import { Swords } from 'lucide-react'
 
 interface PlayerCardProps {
   competitor: Competitor
@@ -10,7 +12,7 @@ interface PlayerCardProps {
 export function PlayerCard({ competitor, onClick }: PlayerCardProps) {
   return (
     <div
-      className="bg-white rounded-card shadow-card p-4 hover:shadow-card-hover transition-shadow cursor-pointer"
+      className="card-elevated p-4 cursor-pointer group"
       onClick={onClick}
       data-testid="player-card"
     >
@@ -54,7 +56,8 @@ export function PlayerCard({ competitor, onClick }: PlayerCardProps) {
       </div>
 
       {/* Match count */}
-      <div className="pt-3 border-t border-gray-200">
+      <div className="pt-3 border-t border-gray-200 flex items-center gap-2">
+        <Swords className="icon-sm icon-muted group-hover:icon-primary transition-colors" />
         <p className="text-sm text-gray-600">
           {competitor.parties} match{competitor.parties !== 1 ? 's' : ''}
         </p>
