@@ -30,10 +30,10 @@ export function SearchInput({
         <button
           type="button"
           onClick={() => onChange('')}
-          className="absolute inset-y-0 right-0 pr-3 flex items-center hover:text-gray-700 transition-colors"
+          className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-700 transition-all duration-150 hover:scale-110 active:scale-95"
           aria-label="Clear search"
         >
-          <X className="h-5 w-5 text-gray-400" />
+          <X className="h-5 w-5" />
         </button>
       )}
     </div>

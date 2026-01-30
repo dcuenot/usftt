@@ -57,7 +57,7 @@ test.describe('Smoke Tests', () => {
     await expect(statsCards).toHaveCount(4, { timeout: 5000 })
 
     // Verify stats cards contain numeric data (not just placeholders)
-    const firstStatValue = statsCards.first().locator('.text-3xl')
+    const firstStatValue = statsCards.first().locator('.text-4xl')
     await expect(firstStatValue).toBeVisible({ timeout: 5000 })
     const statText = await firstStatValue.textContent()
     expect(statText).toMatch(/\d+/) // Should contain at least one digit

@@ -18,7 +18,8 @@ export function DashboardHeader({ stats }: DashboardHeaderProps) {
         value={stats.totalPlayers}
         subtitle="Licenciés"
         icon={<Users className="w-8 h-8" />}
-        variant="default"
+        variant="gradient"
+        cardStyle="elevated"
       />
 
       {/* Active Players */}
@@ -28,6 +29,7 @@ export function DashboardHeader({ stats }: DashboardHeaderProps) {
         subtitle="Avec matchs joués"
         icon={<TrendingUp className="w-8 h-8" />}
         variant="primary"
+        cardStyle="elevated"
       />
 
       {/* Total Matches */}
@@ -36,7 +38,8 @@ export function DashboardHeader({ stats }: DashboardHeaderProps) {
         value={stats.totalMatches}
         subtitle="Cette saison"
         icon={<Swords className="w-8 h-8" />}
-        variant="default"
+        variant="success"
+        cardStyle="elevated"
       />
 
       {/* Average Points */}
@@ -45,7 +48,8 @@ export function DashboardHeader({ stats }: DashboardHeaderProps) {
         value={stats.averagePoints}
         subtitle="Joueurs actifs"
         icon={<Trophy className="w-8 h-8" />}
-        variant="default"
+        variant="gradient"
+        cardStyle="elevated"
       />
     </div>
   )
