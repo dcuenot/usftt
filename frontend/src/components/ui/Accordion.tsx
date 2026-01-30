@@ -1,4 +1,4 @@
-import { useState, ReactNode } from 'react'
+import { useState, ReactNode, useId } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { cn } from '@/utils/cn'
 
@@ -20,6 +20,7 @@ export function Accordion({
   className,
 }: AccordionProps) {
   const [isOpen, setIsOpen] = useState(defaultOpen)
+  const contentId = useId()
 
   // Support both trigger/content and title/children patterns
   const triggerContent = trigger ?? title
@@ -31,6 +32,7 @@ export function Accordion({
         onClick={() => setIsOpen(!isOpen)}
         className="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 active:bg-gray-100 transition-all duration-150"
         aria-expanded={isOpen}
+        aria-controls={contentId}
       >
         {triggerContent}
         <ChevronDown
@@ -38,9 +40,12 @@ export function Accordion({
             'w-5 h-5 text-gray-500 transition-transform duration-200 flex-shrink-0 ml-2',
             isOpen && 'transform rotate-180'
           )}
+          aria-hidden="true"
         />
       </button>
       <div
+        id={contentId}
+        role="region"
         className={cn(
           'overflow-hidden transition-all duration-300',
           isOpen ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'

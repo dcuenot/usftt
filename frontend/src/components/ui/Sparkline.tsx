@@ -56,7 +56,13 @@ export function Sparkline({
         className={cn('text-gray-300', className)}
         style={{ width, height }}
       >
-        <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
+        <svg
+          width={width}
+          height={height}
+          viewBox={`0 0 ${width} ${height}`}
+          role="img"
+          aria-label="No data available"
+        >
           <line
             x1="0"
             y1={height / 2}
@@ -71,6 +77,10 @@ export function Sparkline({
     )
   }
 
+  const min = Math.min(...data)
+  const max = Math.max(...data)
+  const ariaLabel = `Trend chart showing values from ${min} to ${max}`
+
   return (
     <div className={className} style={{ width, height }}>
       <svg
@@ -78,6 +88,8 @@ export function Sparkline({
         height={height}
         viewBox={`0 0 ${width} ${height}`}
         preserveAspectRatio="none"
+        role="img"
+        aria-label={ariaLabel}
       >
         {showArea && fillColor && areaD && (
           <path d={areaD} fill={fillColor} opacity="0.2" />

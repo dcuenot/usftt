@@ -23,6 +23,7 @@ export function Navbar() {
         'bg-white mb-4 hidden lg:block sticky top-0 z-40 transition-all duration-300',
         isScrolled ? 'shadow-md' : 'shadow-sm'
       )}
+      aria-label="Main navigation"
     >
       <div className="max-w-7xl mx-auto px-4">
         <div
@@ -31,7 +32,7 @@ export function Navbar() {
             isScrolled ? 'h-14' : 'h-16'
           )}
         >
-          <Link to="/" className="flex items-center gap-3 group">
+          <Link to="/" className="flex items-center gap-3 group" aria-label="USFTT Home">
             <img
               src="/usftt/logo/usftt-logo.png"
               alt="USFTT Logo"
@@ -59,6 +60,7 @@ export function Navbar() {
                   ? 'bg-primary text-white shadow-sm'
                   : 'text-gray-700 hover:bg-gray-100 hover:text-primary'
               )}
+              aria-current={isActive('/') ? 'page' : undefined}
             >
               Accueil
             </Link>
@@ -70,6 +72,7 @@ export function Navbar() {
                   ? 'bg-primary text-white shadow-sm'
                   : 'text-gray-700 hover:bg-gray-100 hover:text-primary'
               )}
+              aria-current={isActive('/classement') ? 'page' : undefined}
             >
               Classement individuel
             </Link>
@@ -81,6 +84,7 @@ export function Navbar() {
                   ? 'bg-primary text-white shadow-sm'
                   : 'text-gray-700 hover:bg-gray-100 hover:text-primary'
               )}
+              aria-current={isActive('/equipes') ? 'page' : undefined}
             >
               Résultats par équipes
             </Link>
@@ -92,6 +96,7 @@ export function Navbar() {
                   ? 'bg-primary text-white shadow-sm'
                   : 'text-gray-700 hover:bg-gray-100 hover:text-primary'
               )}
+              aria-current={isActive('/tests') ? 'page' : undefined}
             >
               Tests
             </Link>

@@ -32,6 +32,7 @@ export function SearchInput({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
+          aria-label={label || 'Search'}
           className={cn(
             'block w-full rounded-lg border bg-white',
             'pl-10 pr-10 py-2.5 text-sm text-gray-900',

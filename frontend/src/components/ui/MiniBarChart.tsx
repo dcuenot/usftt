@@ -32,15 +32,26 @@ export function MiniBarChart({
       <div
         className={cn('flex items-center justify-center text-gray-300', className)}
         style={{ width, height }}
+        role="img"
+        aria-label="No data available"
       >
         <span className="text-xs">No data</span>
       </div>
     )
   }
 
+  const ariaLabel = `Bar chart with ${data.length} items: ${data
+    .map((item) => `${item.label} ${item.value}`)
+    .join(', ')}`
+
   return (
-    <div className={cn('relative', className)} style={{ width, height }}>
-      <svg width={width} height={height} className="overflow-visible">
+    <div
+      className={cn('relative', className)}
+      style={{ width, height }}
+      role="img"
+      aria-label={ariaLabel}
+    >
+      <svg width={width} height={height} className="overflow-visible" aria-hidden="true">
         {data.map((item, index) => {
           const barHeight = (item.value / maxValue) * height
           const x = index * (barWidth + barGap)
