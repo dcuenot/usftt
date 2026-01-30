@@ -117,10 +117,10 @@ export function EquipesPage() {
 
       {/* Gender Filter and Export */}
       <div className="flex items-center justify-between gap-4 flex-wrap">
-        <div className="inline-flex rounded-lg border border-gray-300 bg-white p-1 shadow-sm">
+        <div className="inline-flex rounded-lg border border-gray-300 bg-white p-1 shadow-sm gap-1 md:gap-0">
           <button
             onClick={() => setGenderFilter('all')}
-            className={`px-4 py-2 rounded-md font-medium text-sm transition-all ${
+            className={`px-4 py-2.5 md:py-2 rounded-md font-medium text-sm transition-all min-h-[44px] md:min-h-0 ${
               genderFilter === 'all'
                 ? 'bg-gray-500 text-white shadow-sm'
                 : 'text-gray-700 hover:bg-gray-50'
@@ -130,7 +130,7 @@ export function EquipesPage() {
           </button>
           <button
             onClick={() => setGenderFilter('G')}
-            className={`px-4 py-2 rounded-md font-medium text-sm transition-all ${
+            className={`px-4 py-2.5 md:py-2 rounded-md font-medium text-sm transition-all min-h-[44px] md:min-h-0 ${
               genderFilter === 'G'
                 ? 'bg-blue-500 text-white shadow-sm'
                 : 'text-gray-700 hover:bg-gray-50'
@@ -140,7 +140,7 @@ export function EquipesPage() {
           </button>
           <button
             onClick={() => setGenderFilter('F')}
-            className={`px-4 py-2 rounded-md font-medium text-sm transition-all ${
+            className={`px-4 py-2.5 md:py-2 rounded-md font-medium text-sm transition-all min-h-[44px] md:min-h-0 ${
               genderFilter === 'F'
                 ? 'bg-violet-500 text-white shadow-sm'
                 : 'text-gray-700 hover:bg-gray-50'
