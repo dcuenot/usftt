@@ -31,9 +31,17 @@ export function ProgressRing({
     return circumference - (progress / 100) * circumference
   }, [value, circumference])
 
+  const ariaLabel = label
+    ? `${label}: ${Math.round(value)} percent`
+    : `Progress: ${Math.round(value)} percent`
+
   return (
-    <div className={cn('relative inline-flex items-center justify-center', className)}>
-      <svg width={size} height={size} className="transform -rotate-90">
+    <div
+      className={cn('relative inline-flex items-center justify-center', className)}
+      role="img"
+      aria-label={ariaLabel}
+    >
+      <svg width={size} height={size} className="transform -rotate-90" aria-hidden="true">
         {/* Background circle */}
         <circle
           cx={center}
@@ -58,7 +66,7 @@ export function ProgressRing({
         />
       </svg>
       {showLabel && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center">
+        <div className="absolute inset-0 flex flex-col items-center justify-center" aria-hidden="true">
           <span className="text-2xl font-bold text-gray-900">
             {Math.round(value)}%
           </span>
